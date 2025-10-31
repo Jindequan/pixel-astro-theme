@@ -35,7 +35,7 @@ const navigationWithActive = navigation.map(item => ({
       <!-- Logo/Site Title -->
       <a href="/" class="group relative">
         <div class="transition-all duration-300 group-hover:scale-110">
-          <h1 class="site-title text-4xl font-bold" style="color: var(--text-primary); font-family: 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+          <h1 class="site-title font-bold" style="color: var(--text-primary); font-family: 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); font-size: calc(var(--font-size-base, 16px) * 2);">
             {siteTitle}
           </h1>
         </div>
@@ -61,11 +61,12 @@ const navigationWithActive = navigation.map(item => ({
                 }
               `}>
                 <span
-                  class="heading text-lg font-bold"
+                  class="heading font-bold"
                   style={`
                     color: var(--text-primary);
                     font-family: 'Doto', 'Sixtyfour', monospace;
                     text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+                    font-size: calc(var(--font-size-base, 16px) * 0.875);
                     ${item.active ? `filter: drop-shadow(0 0 10px var(--pixel-cyan));` : ''}
                   `}
                 >
@@ -94,7 +95,7 @@ const navigationWithActive = navigation.map(item => ({
       <div class="flex items-center space-x-4">
         <!-- Font Size Slider -->
         <div class="flex items-center space-x-3">
-          <span class="heading text-xs opacity-70" style={`color: var(--text-secondary); font-family: 'Doto', 'Sixtyfour', monospace;`}>
+          <span class="heading opacity-70" style={`color: var(--text-secondary); font-family: 'Doto', 'Sixtyfour', monospace; font-size: calc(var(--font-size-base, 16px) * 0.5);`}>
             A
           </span>
           <div class="relative">
@@ -187,7 +188,7 @@ const navigationWithActive = navigation.map(item => ({
               style="position: absolute; opacity: 0; pointer-events: none;"
             />
           </div>
-          <span class="heading text-lg opacity-70" style={`color: var(--text-secondary); font-family: 'Doto', 'Sixtyfour', monospace;`}>
+          <span class="heading opacity-70" style={`color: var(--text-secondary); font-family: 'Doto', 'Sixtyfour', monospace; font-size: calc(var(--font-size-base, 16px) * 1.125);`}>
             A
           </span>
         </div>

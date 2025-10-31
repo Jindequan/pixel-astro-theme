@@ -26,22 +26,45 @@
     box-sizing: border-box;
   }
 
-  /* Global font scaling support - no transition animation */
+  /* Global font scaling support - all elements respond to font-size-base */
   h1, h2, h3, h4, h5, h6 {
-    font-size: calc(1em * var(--font-scale, 1));
+    font-size: var(--font-size-base, 16px);
     /* Remove transition animation for instant switching */
   }
 
-  p, span, div, button, input, textarea, select {
-    font-size: calc(1em * var(--font-scale, 1));
+  h1 { font-size: calc(var(--font-size-base, 16px) * 2.25); }
+  h2 { font-size: calc(var(--font-size-base, 16px) * 1.875); }
+  h3 { font-size: calc(var(--font-size-base, 16px) * 1.5); }
+  h4 { font-size: calc(var(--font-size-base, 16px) * 1.25); }
+  h5 { font-size: calc(var(--font-size-base, 16px) * 1.125); }
+  h6 { font-size: calc(var(--font-size-base, 16px) * 1); }
+
+  p, span, div, button, input, textarea, select, a, li, td, th, label {
+    font-size: var(--font-size-base, 16px);
     /* Remove transition animation for instant switching */
   }
 
-  /* Ensure all text elements support scaling */
+  /* All text elements support scaling */
   .heading, .site-title, .pixel-text, .text-xs, .text-sm, .text-base,
   .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl {
+    font-size: var(--font-size-base, 16px) !important;
     /* Remove transition animation for instant switching */
   }
+
+  /* Tailwind text size classes - scale with font-size-base */
+  .text-xs { font-size: calc(var(--font-size-base, 16px) * 0.75) !important; }
+  .text-sm { font-size: calc(var(--font-size-base, 16px) * 0.875) !important; }
+  .text-base { font-size: var(--font-size-base, 16px) !important; }
+  .text-lg { font-size: calc(var(--font-size-base, 16px) * 1.125) !important; }
+  .text-xl { font-size: calc(var(--font-size-base, 16px) * 1.25) !important; }
+  .text-2xl { font-size: calc(var(--font-size-base, 16px) * 1.5) !important; }
+  .text-3xl { font-size: calc(var(--font-size-base, 16px) * 1.875) !important; }
+  .text-4xl { font-size: calc(var(--font-size-base, 16px) * 2.25) !important; }
+  .text-5xl { font-size: calc(var(--font-size-base, 16px) * 3) !important; }
+  .text-6xl { font-size: calc(var(--font-size-base, 16px) * 3.75) !important; }
+  .text-7xl { font-size: calc(var(--font-size-base, 16px) * 4.5) !important; }
+  .text-8xl { font-size: calc(var(--font-size-base, 16px) * 6) !important; }
+  .text-9xl { font-size: calc(var(--font-size-base, 16px) * 8) !important; }
 }
 
 @layer components {
@@ -57,7 +80,7 @@
   /* Code blocks with pixel font styling */
   pre code, .astro-code {
     font-family: 'Doto', 'Sixtyfour', 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace !important;
-    font-size: calc(0.875rem * var(--font-scale, 1)) !important;
+    font-size: calc(var(--font-size-base, 16px) * 0.875) !important;
     font-weight: 400 !important;
     letter-spacing: 0.05em !important;
     line-height: 1.4 !important;
@@ -83,7 +106,7 @@
     background-color: rgba(255, 255, 255, 0.1) !important;
     padding: 2px 6px !important;
     border-radius: 4px !important;
-    font-size: 0.875em !important;
+    font-size: calc(var(--font-size-base, 16px) * 0.875) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5) !important;
     font-family: 'Doto', 'Sixtyfour', 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace !important;
@@ -99,7 +122,7 @@
     border-collapse: separate;
     border-spacing: 0;
     margin: 1.5rem 0;
-    font-size: calc(0.875rem * var(--font-scale, 1));
+    font-size: calc(var(--font-size-base, 16px) * 0.875);
     background-color: var(--card-bg, rgba(10, 10, 10, 0.9));
     border: 3px solid var(--pixel-cyan, #00ffff) !important;
     border-radius: 8px;
@@ -188,6 +211,7 @@
     display: inline-block;
     text-align: center;
     text-decoration: none;
+    font-size: var(--font-size-base, 16px);
   }
 
   .pixel-button:hover {
@@ -227,7 +251,7 @@
 
   /* Pixel titles */
   .pixel-title {
-    font-size: 2rem;
+    font-size: calc(var(--font-size-base, 16px) * 2);
     font-weight: bold;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -238,7 +262,7 @@
   }
 
   .pixel-subtitle {
-    font-size: 1.25rem;
+    font-size: calc(var(--font-size-base, 16px) * 1.25);
     font-weight: bold;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -369,6 +393,7 @@
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    font-size: var(--font-size-base, 16px);
   }
 
   .pixel-nav-link:hover,
@@ -413,7 +438,7 @@
     background: var(--pixel-green, #00ff00);
     color: var(--bg-color, #000000);
     font-weight: bold;
-    font-size: 0.75rem;
+    font-size: calc(var(--font-size-base, 16px) * 0.75);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border: 2px solid var(--pixel-green, #00ff00);
@@ -422,16 +447,16 @@
 }
 
 @layer utilities {
-  /* Pixel size utility classes */
-  .pixel-xs { font-size: 0.5rem; }
-  .pixel-sm { font-size: 0.75rem; }
-  .pixel-md { font-size: 1rem; }
-  .pixel-lg { font-size: 1.25rem; }
-  .pixel-xl { font-size: 1.5rem; }
-  .pixel-2xl { font-size: 2rem; }
-  .pixel-3xl { font-size: 2.5rem; }
-  .pixel-4xl { font-size: 3rem; }
-  .pixel-5xl { font-size: 4rem; }
+  /* Pixel size utility classes - scale with font-size-base */
+  .pixel-xs { font-size: calc(var(--font-size-base, 16px) * 0.5); }
+  .pixel-sm { font-size: calc(var(--font-size-base, 16px) * 0.75); }
+  .pixel-md { font-size: var(--font-size-base, 16px); }
+  .pixel-lg { font-size: calc(var(--font-size-base, 16px) * 1.25); }
+  .pixel-xl { font-size: calc(var(--font-size-base, 16px) * 1.5); }
+  .pixel-2xl { font-size: calc(var(--font-size-base, 16px) * 2); }
+  .pixel-3xl { font-size: calc(var(--font-size-base, 16px) * 2.5); }
+  .pixel-4xl { font-size: calc(var(--font-size-base, 16px) * 3); }
+  .pixel-5xl { font-size: calc(var(--font-size-base, 16px) * 4); }
 
   /* Letter spacing */
   .pixel-tight { letter-spacing: -0.05em; }
@@ -490,16 +515,16 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .pixel-title {
-    font-size: 1.5rem;
+    font-size: calc(var(--font-size-base, 16px) * 1.5);
   }
 
   .pixel-subtitle {
-    font-size: 1rem;
+    font-size: var(--font-size-base, 16px);
   }
 
   .pixel-button {
     padding: 6px 12px;
-    font-size: 0.875rem;
+    font-size: calc(var(--font-size-base, 16px) * 0.875);
   }
 
   .pixel-card {
