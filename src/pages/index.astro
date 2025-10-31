@@ -1,0 +1,372 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Card from '../components/ui/Card.astro';
+import Icon from '../components/ui/Icon.astro';
+import { getCollection } from 'astro:content';
+import { getSiteConfig } from '../config/site';
+
+// Function to determine appropriate text color based on background
+function getContrastColor(backgroundColor: string): string {
+  // Convert hex to RGB
+  const hex = backgroundColor.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Calculate luminance (perceived brightness)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Return black for light backgrounds, white for dark backgrounds
+  return luminance > 0.5 ? '#000000' : '#ffffff';
+}
+
+// Get site configuration
+const siteConfig = getSiteConfig();
+
+// Get all posts and filter published ones
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts.filter(post => !post.data.draft);
+
+// Sort by publish date (newest first) and featured status
+const sortedPosts = publishedPosts.sort((a, b) => {
+  // Featured posts first
+  if (a.data.featured && !b.data.featured) return -1;
+  if (!a.data.featured && b.data.featured) return 1;
+  // Then by date
+  return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+});
+
+// Get latest 3 posts for homepage
+const latestPosts = sortedPosts.slice(0, 3);
+---
+
+<BaseLayout
+  title={siteConfig.siteName}
+  description={siteConfig.siteDescription}
+  particleColor={siteConfig.themeColors.primary}
+>
+  <Header />
+
+  <main>
+    <!-- Hero Section with Split Layout -->
+    <section class="hero-section">
+      <div class="hero-content-container">
+        <!-- Left Text Section -->
+        <div class="hero-text-section">
+          <div class="max-w-2xl">
+            <h1 class="hero-title" style={`color: ${siteConfig.themeColors.primary};`}>
+              {siteConfig.siteName}
+            </h1>
+            <p class="hero-description" style={`color: ${siteConfig.themeColors.secondary};`}>
+              {siteConfig.siteDescription}
+            </p>
+          </div>
+        </div>
+
+        <!-- Right Image Section -->
+        <div class="hero-image-section">
+          <img
+            src="https://maas-log-prod.cn-wlcb.ufileos.com/anthropic/bde251e3-dc31-4d8a-8579-e855b7a2fdef/7e95ff9661acefe01907d7dce61fc7f7.png?UCloudPublicKey=TOKEN_e15ba47a-d098-4fbd-9afc-a0dcf0e4e621&Expires=1761898214&Signature=i4VMp2d3JYqESFUJxoahd/Dsx70="
+            alt="Hero Background"
+            class="hero-image"
+          />
+          <div class="hero-overlay"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Latest Posts Section -->
+    <section class="latest-posts-section">
+      <div class="max-w-6xl mx-auto py-16 px-6">
+        <div class="text-center mb-12">
+          <h2 class="section-title" style={`color: ${siteConfig.themeColors.primary};`}>
+            <Icon name="clock" size={24} class="inline-icon mr-2" />
+            Latest Articles
+          </h2>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {latestPosts.map((post) => (
+            <Card
+              key={post.slug}
+              title={post.data.title}
+              description={post.data.description}
+              href={`/articles/${post.slug}/`}
+              glowColor={post.data.color}
+              className="pixel-card hover:scale-105 transition-transform duration-300"
+            >
+              <div class="mb-4">
+                {post.data.featured && (
+                  <div class="inline-block px-3 py-1 text-xs font-bold mb-2" style={`background-color: ${post.data.color}; color: ${getContrastColor(post.data.color)};`}>
+                    <Icon name="star" size={10} class="inline-icon mr-1" />
+                    FEATURED
+                  </div>
+                )}
+                <p class="pixel-text pixel-normal text-sm opacity-60 mb-2">
+                  {new Date(post.data.publishDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+                <div class="flex flex-wrap gap-1">
+                  {post.data.tags.slice(0, 3).map((tag) => (
+                    <span
+                      key={tag}
+                      class="pixel-tag text-xs"
+                      style={`background: ${siteConfig.themeColors.accent}20; color: ${siteConfig.themeColors.accent}; border: 1px solid ${siteConfig.themeColors.accent};`}
+                    >
+                      {tag.toUpperCase()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        <!-- View All Articles Link -->
+        <div class="text-center mt-12">
+          <a
+            href="/articles"
+            class="view-all-link"
+            style={`border-color: ${siteConfig.themeColors.secondary}; color: ${siteConfig.themeColors.secondary};`}
+          >
+            <Icon name="arrowRight" size={20} class="inline-icon mr-2" />
+            View All Articles
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  /* Hero Section Styles */
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero-content-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+  }
+
+  /* Left Text Section */
+  .hero-text-section {
+    flex: 1;
+    padding: 4rem 2rem 4rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    position: relative;
+  }
+
+  /* Right Image Section */
+  .hero-image-section {
+    flex: 1;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.4) 25%,
+      rgba(0, 0, 0, 0.5) 50%,
+      rgba(0, 0, 0, 0.4) 75%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
+    z-index: 2;
+  }
+
+  /* 添加额外的渐变蒙版层 */
+  .hero-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle at center,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 40%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+    z-index: 3;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    text-shadow:
+      3px 3px 0 rgba(0, 0, 0, 0.8),
+      6px 6px 0 rgba(0, 255, 0, 0.3);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+    font-weight: 900;
+    animation: heroGlow 3s ease-in-out infinite;
+    text-align: left;
+  }
+
+  .hero-description {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+    opacity: 0.9;
+    line-height: 1.6;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  @keyframes heroGlow {
+    0%, 100% {
+      opacity: 0.9;
+      filter: brightness(1);
+    }
+    50% {
+      opacity: 1;
+      filter: brightness(1.2);
+    }
+  }
+
+  /* Latest Posts Section Styles */
+  .latest-posts-section {
+    background: var(--bg-primary);
+    position: relative;
+    z-index: 4;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .view-all-link {
+    display: inline-block;
+    padding: 1rem 2rem;
+    border: 3px solid;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+  }
+
+  .view-all-link:hover {
+    transform: translateY(-2px);
+    background: var(--bg-secondary);
+    transform: scale(1.05);
+  }
+
+  /* Card hover effects */
+  .pixel-card {
+    transition: all 0.3s ease;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  .pixel-card:hover {
+    transform: translateY(-8px) scale(1.02);
+  }
+
+  /* Tag hover effects */
+  .pixel-tag {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .pixel-tag:hover {
+    transform: scale(1.1);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-content-container {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+
+    .hero-text-section {
+      padding: 3rem 2rem;
+      min-height: 50vh;
+    }
+
+    .hero-image-section {
+      height: 50vh;
+      order: -1; /* 移动端图片在上方 */
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 8vw, 3rem);
+      text-align: center;
+    }
+
+    .hero-description {
+      font-size: clamp(1rem, 4vw, 1.2rem);
+      text-align: center;
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-text-section {
+      padding: 2rem 1rem;
+    }
+
+    .hero-image-section {
+      height: 40vh;
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 10vw, 2.5rem);
+    }
+
+    .hero-description {
+      font-size: clamp(0.9rem, 5vw, 1.1rem);
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+
+  /* Pixel perfect rendering */
+  * {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+</style>

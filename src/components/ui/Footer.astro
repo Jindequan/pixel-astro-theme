@@ -1,0 +1,169 @@
+---
+import Icon from './Icon.astro';
+import { getSiteConfig } from '../../config/site';
+
+export interface Props {
+  copyright?: string;
+  particleColor?: string;
+}
+
+const {
+  copyright = new Date().getFullYear().toString(),
+  particleColor
+} = Astro.props;
+
+// Get site configuration
+const siteConfig = getSiteConfig();
+const siteTitle = siteConfig.siteName;
+const author = siteConfig.author;
+const finalParticleColor = particleColor || siteConfig.themeColors.primary;
+---
+
+<footer class="pixel-border backdrop-blur-sm mt-16" style="background-color: var(--bg-overlay);">
+  <div class="container mx-auto px-4 py-8">
+    <div class="grid gap-8 md:grid-cols-3">
+      <!-- Site Information -->
+      <div class="text-center md:text-left">
+        <div class="mb-4">
+          <h3 class="site-title text-2xl font-bold" style="color: var(--text-primary); font-family: 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+            {siteTitle}
+          </h3>
+        </div>
+        <p class="pixel-text-green pixel-normal text-sm opacity-80">
+          CREATED BY {author.toUpperCase()}<br/>
+          {siteConfig.siteDescription.toUpperCase()}
+        </p>
+      </div>
+
+      <!-- Social Media -->
+      <div class="text-center">
+        <h3 class="heading text-lg font-bold mb-4" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace;">
+          CONNECT WITH US
+        </h3>
+        <div class="flex justify-center space-x-4 mb-4">
+          {siteConfig.socialLinks.map((link) => (
+            <a href={link.url} target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-transform hover:scale-110 flex items-center gap-2">
+              <Icon name={link.icon} size={20} color="var(--text-primary)" />
+              <span class="heading text-sm font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace;">
+                {link.name.toUpperCase()}
+              </span>
+            </a>
+          ))}
+        </div>
+        <p class="pixel-text-cyan pixel-normal text-sm opacity-80">
+          FOLLOW US FOR UPDATES AND SUPPORT
+        </p>
+      </div>
+
+      <!-- Resource Links -->
+      <div class="text-center md:text-right">
+        <h3 class="heading text-lg font-bold mb-4" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace;">
+          USEFUL LINKS
+        </h3>
+        <ul class="space-y-2 text-sm">
+          <li>
+            <a href="https://docs.astro.build" target="_blank" rel="noopener" class="pixel-text-cyan hover:opacity-80 transition-opacity">
+              → ASTRO DOCS
+            </a>
+          </li>
+          <li>
+            <a href="https://fonts.google.com/specimen/Doto" target="_blank" rel="noopener" class="pixel-text-magenta hover:opacity-80 transition-opacity">
+              → DOTO FONT
+            </a>
+          </li>
+          <li>
+            <a href="https://lospec.com/palette-list" target="_blank" rel="noopener" class="pixel-text-yellow hover:opacity-80 transition-opacity">
+              → PIXEL ART
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="pixel-divider my-8"></div>
+
+    <!-- Copyright Information -->
+    <div class="text-center">
+      <span class="pixel-text-green text-sm font-bold opacity-80">
+        © {copyright} {siteTitle} BY {author.toUpperCase()}
+      </span>
+      <div class="mt-2">
+        <span class="pixel-text-cyan text-xs inline-block opacity-60">
+          BUILT WITH ASTRO
+        </span>
+        <span class="pixel-text-yellow text-xs inline-block opacity-60">
+          •
+        </span>
+        <span class="pixel-text-magenta text-xs inline-block opacity-60">
+          POWERED BY PIXEL FONTS
+        </span>
+      </div>
+    </div>
+
+    <!-- Pixel Decoration -->
+    <div class="fixed bottom-4 left-4 opacity-20 pointer-events-none">
+      <h5 class="pixel-title-cyan text-sm">
+        PIXEL
+      </h5>
+    </div>
+
+    <div class="fixed bottom-4 right-4 opacity-20 pointer-events-none">
+      <h5 class="pixel-title-magenta text-sm">
+        THEME
+      </h5>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* Footer Specific Styles */
+  footer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  footer a {
+    color: currentColor;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  footer a:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+  }
+
+  /* Scanline Effect */
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent,
+      var(--particle-color, #00ff00),
+      transparent
+    );
+    animation: footerScanline 4s linear infinite;
+  }
+
+  @keyframes footerScanline {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    footer .grid {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    footer .text-center.md\\:text-right {
+      text-align: center;
+    }
+  }
+</style>

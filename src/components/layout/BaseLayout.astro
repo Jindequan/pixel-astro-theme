@@ -1,0 +1,444 @@
+---
+import '../../styles/global.css';
+import Footer from '../ui/Footer.astro';
+import KofiButton from '../ui/KofiButton.astro';
+import { getSiteConfig } from '../../config/site';
+import { generateThemeCSSString } from '../../config/theme';
+
+export interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  particleColor?: string;
+  backgroundColor?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  particleColor,
+  backgroundColor
+} = Astro.props;
+
+// Get site configuration
+const siteConfig = getSiteConfig();
+const finalTitle = siteConfig.siteName ? `${title} | ${siteConfig.siteName}` : title;
+const finalDescription = description || siteConfig.siteDescription;
+const finalOgImage = ogImage || `/api/og-image.png?title=${encodeURIComponent(title)}&description=${encodeURIComponent(finalDescription)}&particleColor=${encodeURIComponent(siteConfig.themeColors.primary)}`;
+const finalParticleColor = particleColor || siteConfig.themeColors.primary;
+const finalBackgroundColor = backgroundColor || siteConfig.themeColors.background;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Get initial theme from localStorage or default to dark
+const initialTheme = 'dark'; // We'll set this in JavaScript
+---
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{finalTitle}</title>
+    <meta name="description" content={finalDescription} />
+    <meta name="author" content={siteConfig.author} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href={siteConfig.favicon} />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+
+    <!-- SEO Meta Tags -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={finalTitle} />
+    <meta property="og:description" content={finalDescription} />
+    <meta property="og:image" content={new URL(finalOgImage, Astro.url)} />
+    <meta property="og:site_name" content={siteConfig.siteName} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={finalTitle} />
+    <meta property="twitter:description" content={finalDescription} />
+    <meta property="twitter:image" content={new URL(finalOgImage, Astro.url)} />
+    <meta property="twitter:creator" content={siteConfig.author} />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Sixtyfour&display=swap" rel="stylesheet">
+
+    <!-- Compatibility CSS Variables -->
+    <style set:html={generateThemeCSSString(siteConfig.themeColors)}></style>
+
+    <!-- Main Theme CSS -->
+    <style>
+      /* Main theme variable system */
+      :root {
+        --bg-primary: #ffffff;           /* Pure white background */
+        --bg-secondary: #f8fafc;         /* Light gray for cards/divs */
+        --bg-tertiary: #f1f5f9;          /* Slightly darker gray for hover states */
+        --text-primary: #1e293b;         /* Dark blue-gray for main text */
+        --text-secondary: #64748b;       /* Medium blue-gray for secondary text */
+        --text-muted: #94a3b8;           /* Light gray for muted text */
+        --border-primary: #e2e8f0;       /* Light gray borders */
+        --border-secondary: #cbd5e1;     /* Medium light gray borders */
+        --accent: #0369a1;               /* Blue accent color */
+        --accent-hover: #0c4a6e;         /* Darker blue for hover */
+        --shadow: rgba(0, 0, 0, 0.1);    /* Subtle shadows */
+        --card-bg: #f8fafc;              /* Light gray for cards */
+        --particle-color: var(--pixel-cyan);
+
+        /* Improved colors for day mode */
+        --pixel-yellow: #ff8c00;         /* Dark orange instead of light yellow */
+        --pixel-cyan: #008b8b;           /* Dark cyan instead of light cyan */
+        --pixel-orange: #ff8c00;         /* Dark orange */
+      }
+
+      [data-theme="dark"] {
+        --bg-primary: #000000 !important;      /* Pure black background */
+        --bg-secondary: #1a1a1a !important;    /* Dark gray for cards/divs */
+        --bg-tertiary: #2d2d2d !important;     /* Slightly lighter gray for hover */
+        --text-primary: #ffffff !important;    /* Pure white text */
+        --text-secondary: #e2e8f0 !important;  /* Light gray for secondary text */
+        --text-muted: #94a3b8 !important;      /* Medium gray for muted text */
+        --border-primary: #334155 !important;  /* Dark gray borders */
+        --border-secondary: #475569 !important; /* Medium dark gray borders */
+        --accent: #0369a1 !important;          /* Blue accent color */
+        --accent-hover: #0284c7 !important;    /* Lighter blue for hover in dark mode */
+        --shadow: rgba(0, 0, 0, 0.5) !important; /* Stronger shadows for dark mode */
+        --card-bg: #1a1a1a !important;        /* Dark gray for cards */
+        --particle-color: var(--pixel-cyan) !important;
+
+        /* Maintain proper colors for dark mode */
+        --pixel-yellow: #ffaa00 !important;   /* Bright orange for dark mode */
+        --pixel-cyan: #00ffff !important;     /* Bright cyan for dark mode */
+        --pixel-orange: #ffaa00 !important;   /* Bright orange for dark mode */
+      }
+
+      /* Base theme styling */
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      /* Component styling */
+      .pixel-card, .card {
+        background-color: var(--card-bg);
+        border-color: var(--border-primary);
+        transition: all 0.3s ease;
+      }
+
+      /* Ensure all div elements with card-like styling use proper background */
+      .pixel-card,
+      .card,
+      div[class*="pixel"],
+      div[class*="card"] {
+        background-color: var(--card-bg) !important;
+      }
+
+      /* Main content areas should use the secondary background */
+      main, .container, .max-w-7xl, .max-w-6xl {
+        background-color: var(--bg-primary);
+      }
+
+      /* Any section or aside should use card background */
+      section, aside {
+        background-color: var(--card-bg);
+      }
+
+      .theme-toggle-button {
+        background: transparent;
+        color: var(--text-primary);
+        border: 2px solid var(--border-primary);
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle-button:hover {
+        border-color: var(--accent);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      /* Theme icon visibility */
+      [data-theme="light"] .moon-icon {
+        display: none !important;
+      }
+
+      [data-theme="light"] .sun-icon {
+        display: block !important;
+      }
+
+      [data-theme="dark"] .moon-icon {
+        display: block !important;
+      }
+
+      [data-theme="dark"] .sun-icon {
+        display: none !important;
+      }
+
+      /* Font styling */
+      .site-title {
+        font-family: 'Sixtyfour', 'Courier New', monospace !important;
+      }
+
+      .heading {
+        font-family: 'Doto', 'Sixtyfour', 'Courier New', monospace !important;
+      }
+
+      /* Pixel-perfect rendering */
+      .pixel-block,
+      .theme-icon-container,
+      .theme-toggle-button {
+        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen relative overflow-x-hidden">
+    <!-- Global particle background -->
+    <canvas id="particle-background" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
+
+    <!-- Main content -->
+    <div class="relative z-10">
+      <slot />
+    </div>
+
+    <!-- Footer -->
+    <Footer particleColor={finalParticleColor} />
+
+    <!-- Global Ko-Fi Donation Button -->
+    <KofiButton />
+
+    <!-- Dark mode and font size control script -->
+    <script>
+      // Enhanced theme toggle system
+      let currentTheme = 'dark';
+
+      function setTheme(theme) {
+        console.log(`Setting theme to: ${theme}`);
+        currentTheme = theme;
+
+        // Set theme on HTML element
+        document.documentElement.setAttribute('data-theme', theme);
+
+        // Save to localStorage
+        localStorage.setItem('theme', theme);
+
+        // Force style recalculation
+        document.documentElement.style.display = 'none';
+        document.documentElement.offsetHeight; // Trigger reflow
+        document.documentElement.style.display = '';
+
+        console.log(`Theme successfully changed to: ${theme}`);
+        console.log(`HTML data-theme attribute: ${document.documentElement.getAttribute('data-theme')}`);
+        console.log(`CSS variables --bg-primary: ${getComputedStyle(document.documentElement).getPropertyValue('--bg-primary')}`);
+      }
+
+      function toggleTheme() {
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        console.log(`Toggling theme from ${currentTheme} to ${newTheme}`);
+        currentTheme = newTheme;
+        setTheme(newTheme);
+
+      }
+
+      function initTheme() {
+        // Get saved theme or use current data-theme attribute
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        const currentAttribute = document.documentElement.getAttribute('data-theme');
+
+        console.log(`Initializing theme - saved: ${savedTheme}, current attribute: ${currentAttribute}`);
+
+        // Set theme immediately
+        setTheme(savedTheme);
+      }
+
+      // Enhanced particle background system
+      class ParticleBackground {
+        constructor() {
+          this.canvas = document.getElementById('particle-background');
+          this.ctx = this.canvas.getContext('2d');
+          this.particles = [];
+          this.animationId = null;
+
+          this.init();
+          this.setupEventListeners();
+          this.animate();
+        }
+
+        getParticleColor() {
+          return getComputedStyle(document.documentElement)
+            .getPropertyValue('--particle-color').trim() || '#06b6d4';
+        }
+
+        setupEventListeners() {
+          window.addEventListener('resize', () => this.init());
+
+          // Listen for theme changes
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                this.updateParticleColor();
+              }
+            });
+          });
+
+          observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme']
+          });
+        }
+
+        init() {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+
+          // Create optimized particle count based on screen size
+          const area = this.canvas.width * this.canvas.height;
+          const particleCount = Math.max(5, Math.floor(area / 20000));
+
+          this.particles = [];
+          for (let i = 0; i < particleCount; i++) {
+            this.particles.push(this.createParticle());
+          }
+        }
+
+        createParticle() {
+          return {
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            size: Math.random() * 2 + 1,
+            speedX: (Math.random() - 0.5) * 0.3,
+            speedY: (Math.random() - 0.5) * 0.3,
+            opacity: Math.random() * 0.4 + 0.1,
+            pulsePhase: Math.random() * Math.PI * 2,
+            pulseSpeed: 0.02 + Math.random() * 0.02
+          };
+        }
+
+        updateParticleColor() {
+          this.particleColor = this.getParticleColor();
+          console.log('Particle color updated to:', this.particleColor);
+        }
+
+        update() {
+          this.particles.forEach(particle => {
+            // Update position
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+
+            // Update pulse animation
+            particle.pulsePhase += particle.pulseSpeed;
+
+            // Boundary detection with smooth bounce
+            if (particle.x <= 0 || particle.x >= this.canvas.width) {
+              particle.speedX *= -1;
+              particle.x = Math.max(0, Math.min(this.canvas.width, particle.x));
+            }
+            if (particle.y <= 0 || particle.y >= this.canvas.height) {
+              particle.speedY *= -1;
+              particle.y = Math.max(0, Math.min(this.canvas.height, particle.y));
+            }
+          });
+        }
+
+        draw() {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+          const currentColor = this.getParticleColor();
+
+          this.particles.forEach(particle => {
+            this.ctx.save();
+
+            // Apply pulsing opacity
+            const pulseOpacity = Math.sin(particle.pulsePhase) * 0.1 + particle.opacity;
+            this.ctx.globalAlpha = pulseOpacity;
+
+            // Set color and glow
+            this.ctx.fillStyle = currentColor;
+            this.ctx.shadowBlur = 8;
+            this.ctx.shadowColor = currentColor;
+
+            // Draw pixelated particle
+            const pixelSize = Math.max(1, Math.floor(particle.size));
+            const x = Math.floor(particle.x / pixelSize) * pixelSize;
+            const y = Math.floor(particle.y / pixelSize) * pixelSize;
+
+            this.ctx.fillRect(x, y, pixelSize, pixelSize);
+            this.ctx.restore();
+          });
+        }
+
+        animate() {
+          this.update();
+          this.draw();
+          this.animationId = requestAnimationFrame(() => this.animate());
+        }
+
+        destroy() {
+          if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+          }
+        }
+      }
+
+      // Initialize all systems
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM Content Loaded - initializing systems');
+
+        // Initialize theme immediately
+        initTheme();
+
+  
+        // Initialize particle background
+        window.particleBackground = new ParticleBackground();
+
+        // Font size slider is now handled in Header component
+
+        console.log('All systems initialized successfully');
+      });
+
+      // Also initialize immediately in case DOMContentLoaded already fired
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTheme);
+      } else {
+        initTheme();
+      }
+    </script>
+
+    <style>
+      /* Doto font styles */
+      body {
+        font-family: 'Doto', 'Courier New', monospace;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      /* Ensure titles also use Doto font */
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Doto', 'Sixtyfour', monospace;
+        font-weight: 700;
+      }
+
+      /* Simple pixel-style effects */
+      .pixel-text {
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        letter-spacing: 0.05em;
+      }
+
+      .pixel-title {
+        text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+        letter-spacing: 0.1em;
+        font-weight: 900;
+      }
+    </style>
+  </body>
+</html>

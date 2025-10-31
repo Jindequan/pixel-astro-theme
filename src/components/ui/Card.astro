@@ -1,0 +1,120 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  href?: string;
+  glowColor?: string;
+  className?: string;
+  interactive?: boolean;
+  particleEffect?: boolean;
+}
+
+const {
+  title,
+  description,
+  imageUrl,
+  href,
+  glowColor = '#00ff00',
+  className = '',
+  interactive = true,
+  particleEffect = true
+} = Astro.props;
+
+// Function to determine appropriate text color based on background
+function getContrastColor(backgroundColor: string): string {
+  // Convert hex to RGB
+  const hex = backgroundColor.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Calculate luminance (perceived brightness)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Return black for light backgrounds, white for dark backgrounds
+  return luminance > 0.5 ? '#000000' : '#ffffff';
+}
+
+const cardId = 'card-' + Math.random().toString(36).substr(2, 9);
+const baseClass = `pixel-card ${interactive ? 'group cursor-pointer' : ''} ${className}`;
+const titleColor = getContrastColor(glowColor);
+---
+
+<div class={baseClass} data-card-id={cardId} data-href={href}>
+  {imageUrl && (
+    <div class="mb-4 overflow-hidden pixel-border">
+      <img
+        src={imageUrl}
+        alt={title || 'Card image'}
+        class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+        style="image-rendering: pixelated;"
+        loading="lazy"
+      />
+    </div>
+  )}
+
+  {title && (
+    <h3 class="pixel-text text-xl font-bold mb-2 transition-colors duration-300 group-hover:text-white" style="color: var(--text-primary); text-shadow: 0 0 10px var(--pixel-cyan);">
+      {title}
+    </h3>
+  )}
+
+  {description && (
+    <p class="text-sm opacity-80 leading-relaxed">
+      {description}
+    </p>
+  )}
+
+  <slot />
+
+  <!-- Corner decoration -->
+  <div class="absolute top-2 left-2 w-4 h-4" style={`border-top: 2px solid ${glowColor}; border-left: 2px solid ${glowColor};`}></div>
+  <div class="absolute top-2 right-2 w-4 h-4" style={`border-top: 2px solid ${glowColor}; border-right: 2px solid ${glowColor};`}></div>
+  <div class="absolute bottom-2 left-2 w-4 h-4" style={`border-bottom: 2px solid ${glowColor}; border-left: 2px solid ${glowColor};`}></div>
+  <div class="absolute bottom-2 right-2 w-4 h-4" style={`border-bottom: 2px solid ${glowColor}; border-right: 2px solid ${glowColor};`}></div>
+</div>
+
+<script define:vars={{ cardId, glowColor, particleEffect }}>
+  // Simplified card effect
+  if (particleEffect) {
+    class CardEffect {
+      constructor(cardId, glowColor) {
+        this.card = document.querySelector(`[data-card-id="${cardId}"]`);
+        this.glowColor = glowColor;
+        this.href = this.card?.dataset.href;
+        this.init();
+      }
+
+      init() {
+        if (!this.card) return;
+
+        // Mouse events
+        this.card.addEventListener('mouseenter', () => this.addGlow());
+        this.card.addEventListener('mouseleave', () => this.removeGlow());
+
+        // If there's a link, add click event
+        if (this.href) {
+          this.card.addEventListener('click', () => {
+            window.location.href = this.href;
+          });
+        }
+      }
+
+      addGlow() {
+        this.card.style.boxShadow = `0 0 20px ${this.glowColor}`;
+        this.card.style.transform = 'scale(1.02)';
+      }
+
+      removeGlow() {
+        this.card.style.boxShadow = '';
+        this.card.style.transform = '';
+      }
+    }
+
+    // Initialize card effect
+    document.addEventListener('DOMContentLoaded', () => {
+      new CardEffect(cardId, glowColor);
+    });
+  }
+</script>

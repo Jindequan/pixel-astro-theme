@@ -1,0 +1,335 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+import { getSiteConfig } from '../config/site';
+
+// Get site configuration
+const siteConfig = getSiteConfig();
+const author = siteConfig.author;
+const githubUsername = siteConfig.socialLinks.find(link => link.name === 'GitHub')?.url?.split('/').pop() || 'username';
+const emailLink = siteConfig.socialLinks.find(link => link.name === 'Email')?.url || 'mailto:example@email.com';
+const githubLink = siteConfig.socialLinks.find(link => link.name === 'GitHub')?.url || '#';
+
+// Get dynamic OG image
+const ogImageUrl = `/api/og-image.png?title=${encodeURIComponent('ABOUT')}&description=${encodeURIComponent(`${siteConfig.siteName} by ${author}`)}&particleColor=${encodeURIComponent(siteConfig.themeColors.primary)}`;
+---
+
+<BaseLayout
+  title="About"
+  description={`Information about ${siteConfig.siteName} and its creator ${author}`}
+  ogImage={ogImageUrl}
+  particleColor={siteConfig.themeColors.primary}
+>
+  <Header />
+
+  <main class="pixel-container">
+    <!-- Hero Section -->
+    <section class="text-center py-16">
+      <div class="mb-8">
+        <h1 class="heading text-6xl font-bold mb-4" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); animation: glow 2s ease-in-out infinite alternate;">
+          ABOUT THE THEME
+        </h1>
+      </div>
+
+      <p class="text-xl mb-8 opacity-80 max-w-2xl mx-auto pixel-text pixel-normal">
+        Learn about this true pixel font theme and its creator
+      </p>
+    </section>
+
+    <!-- Theme Introduction -->
+    <section class="py-16">
+      <div class="text-center mb-12">
+        <h2 class="heading text-5xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+          THEME INTRODUCTION
+        </h2>
+      </div>
+
+      <div class="grid gap-8 md:grid-cols-2">
+        <Card
+          title="TRUE PIXEL FONTS"
+          description="Using true pixel font rendering technology"
+          glowColor={siteConfig.themeColors.primary}
+          className="pixel-card"
+        >
+          <div class="space-y-4">
+            <p class="pixel-text pixel-normal opacity-80">
+              Pixel Astro Theme is an Astro theme using true pixel font technology, where each character is rendered through precise pixel blocks, completely recreating retro gaming aesthetics.
+            </p>
+            <div class="py-4">
+              <h3 class="heading text-3xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+                PIXEL PERFECT
+              </h3>
+            </div>
+          </div>
+        </Card>
+
+        <Card
+          title="HARDCORE AESTHETIC"
+          description="Tough and powerful design style"
+          glowColor={siteConfig.themeColors.accent}
+          className="pixel-card"
+        >
+          <div class="space-y-4">
+            <p class="pixel-text pixel-normal opacity-80">
+              Adopting a tough and powerful design concept, combining modern technology with retro aesthetics to create a unique visual experience. Every pixel is carefully designed.
+            </p>
+            <div class="py-4">
+              <h3 class="pixel-title-magenta text-3xl font-bold">
+                BADASS STYLE
+              </h3>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Technical Features -->
+    <section class="py-16">
+      <div class="text-center mb-12">
+        <h2 class="pixel-title-yellow text-5xl font-bold">
+          TECHNICAL FEATURES
+        </h2>
+      </div>
+
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div class="pixel-card">
+          <h3 class="pixel-subtitle mb-4 text-pixel-green">
+            MULTIPLE FONT STYLES
+          </h3>
+          <div class="py-4 space-y-2">
+            <h4 class="heading text-xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+              8BIT • 16BIT • RETRO
+            </h4>
+            <h4 class="heading text-xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+              BLOCK • DOT
+            </h4>
+          </div>
+        </div>
+
+        <div class="pixel-card">
+          <h3 class="pixel-subtitle mb-4 text-pixel-cyan">
+            DYNAMIC EFFECTS
+          </h3>
+          <div class="py-4">
+            <h4 class="heading text-xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+              ANIMATION • GLOW • GLITCH
+            </h4>
+          </div>
+        </div>
+
+        <div class="pixel-card">
+          <h3 class="pixel-subtitle mb-4 text-pixel-yellow">
+            RESPONSIVE DESIGN
+          </h3>
+          <div class="py-4">
+            <h4 class="pixel-title-yellow text-xl font-bold">
+              MOBILE • TABLET • DESKTOP
+            </h4>
+          </div>
+        </div>
+
+        <div class="pixel-card">
+          <h3 class="pixel-subtitle mb-4 text-pixel-purple">
+            DARK MODE
+          </h3>
+          <div class="py-4">
+            <h4 class="pixel-title-magenta text-xl font-bold">
+              DARK • LIGHT • CUSTOM
+            </h4>
+          </div>
+        </div>
+
+        <div class="pixel-card">
+          <h3 class="pixel-subtitle mb-4 text-pixel-orange">
+            FONT ADJUSTMENT
+          </h3>
+          <div class="py-4">
+            <h4 class="pixel-title-orange text-xl font-bold">
+              SIZE • SPACING • CUSTOMIZE
+            </h4>
+          </div>
+        </div>
+
+        <div class="pixel-card">
+          <h3 class="pixel-subtitle mb-4 text-pixel-blue">
+            SEO OPTIMIZED
+          </h3>
+          <div class="py-4">
+            <h4 class="heading text-xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+              OG IMAGE • META • PERFECT
+            </h4>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Developer Information -->
+    <section class="py-16">
+      <div class="text-center mb-12">
+        <h2 class="pixel-title-magenta text-5xl font-bold" style="animation: glow 2s ease-in-out infinite alternate;">
+          DEVELOPER
+        </h2>
+      </div>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="pixel-card">
+          <div class="text-center space-y-6">
+            <!-- Avatar/Logo -->
+            <div class="w-32 h-32 mx-auto rounded-full border-4 border-current flex items-center justify-center" style="background-color: var(--card-bg, rgba(10, 10, 10, 0.9));">
+              <h3 class="heading text-4xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+                {author.split(' ').map(name => name[0]).join('').toUpperCase()}
+              </h3>
+            </div>
+
+            <!-- Name -->
+            <div class="py-4">
+              <h3 class="heading text-4xl font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+                {author.toUpperCase()}
+              </h3>
+            </div>
+
+            <!-- Bio -->
+            <p class="pixel-text pixel-normal opacity-80 max-w-2xl mx-auto">
+              Creator of {siteConfig.siteName}
+              <br/>
+              {siteConfig.siteDescription}
+            </p>
+
+            <!-- Contact Information -->
+            <div class="space-y-4 py-6">
+              {siteConfig.socialLinks.map((link) => (
+                <div class="flex items-center justify-center space-x-4">
+                  <h4 class="pixel-title-yellow text-lg font-bold">
+                    {link.name}:
+                  </h4>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:opacity-80 transition-transform hover:scale-110"
+                  >
+                    <span class="pixel-title-green text-lg font-bold">
+                      {link.url.replace(/^https?:\/\//, '').replace(/^mailto:/, '')}
+                    </span>
+                  </a>
+                </div>
+              ))}
+            </div>
+
+            <!-- Skill Tags -->
+            <div class="flex flex-wrap justify-center gap-4 py-4">
+              <span class="pixel-tag" style="background: var(--pixel-green); border-color: var(--pixel-green);">ASTRO</span>
+              <span class="pixel-tag" style="background: var(--pixel-cyan); border-color: var(--pixel-cyan);">PIXEL ART</span>
+              <span class="pixel-tag" style="background: var(--pixel-orange); border-color: var(--pixel-orange);">FRONTEND</span>
+              <span class="pixel-tag" style="background: var(--pixel-orange); border-color: var(--pixel-orange);">CSS</span>
+              <span class="pixel-tag" style="background: var(--pixel-green); border-color: var(--pixel-green);">JAVASCRIPT</span>
+              <span class="pixel-tag" style="background: var(--pixel-cyan); border-color: var(--pixel-cyan);">RESPONSIVE</span>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex gap-4 justify-center flex-wrap py-6">
+              <Button
+                href={githubLink}
+                target="_blank"
+                size="lg"
+                variant="primary"
+                glowColor={siteConfig.themeColors.primary}
+              >
+                FOLLOW ON GITHUB
+              </Button>
+              <Button
+                href="/"
+                size="lg"
+                variant="secondary"
+                glowColor={siteConfig.themeColors.secondary}
+              >
+                BACK TO HOME
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Open Source Statement -->
+    <section class="py-16 text-center">
+      <div class="max-w-2xl mx-auto">
+        <div class="pixel-card">
+          <h3 class="pixel-subtitle mb-4 text-pixel-green">
+            🌟 OPEN SOURCE PROJECT
+          </h3>
+          <div class="py-4">
+            <h4 class="pixel-title-green text-2xl font-bold">
+              FREE • OPEN SOURCE • MIT LICENSE
+            </h4>
+          </div>
+          <p class="pixel-text pixel-normal opacity-80 mb-6">
+            Pixel Astro Theme is <strong>100% free and open source</strong>, released under the MIT License.
+            <br/>
+            Use it for personal projects, commercial sites, or anything in between!
+          </p>
+
+          <!-- Open Source Benefits -->
+          <div class="grid gap-4 py-4">
+            <div class="flex items-center justify-center space-x-2">
+              <span class="pixel-title-cyan">✅</span>
+              <span class="pixel-text opacity-90">No license fees</span>
+            </div>
+            <div class="flex items-center justify-center space-x-2">
+              <span class="pixel-title-cyan">✅</span>
+              <span class="pixel-text opacity-90">Commercial use allowed</span>
+            </div>
+            <div class="flex items-center justify-center space-x-2">
+              <span class="pixel-title-cyan">✅</span>
+              <span class="pixel-text opacity-90">Modify and distribute</span>
+            </div>
+            <div class="flex items-center justify-center space-x-2">
+              <span class="pixel-title-cyan">✅</span>
+              <span class="pixel-text opacity-90">Community supported</span>
+            </div>
+          </div>
+
+          <!-- Call to Action -->
+          <div class="flex gap-4 justify-center mt-6 flex-wrap">
+            <Button
+              href={githubLink}
+              target="_blank"
+              size="md"
+              variant="primary"
+              glowColor={siteConfig.themeColors.primary}
+            >
+              ⭐ STAR ON GITHUB
+            </Button>
+            <Button
+              href="https://github.com/Jindequan/pixel-astro-theme/fork"
+              target="_blank"
+              size="md"
+              variant="secondary"
+              glowColor={siteConfig.themeColors.secondary}
+            >
+              🍴 FORK REPOSITORY
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Pixel Decoration Background -->
+  <div class="fixed bottom-4 right-4 opacity-20 z-0">
+    <h4 class="heading text-lg font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace;">
+      ABOUT
+    </h4>
+  </div>
+
+  <div class="fixed top-1/2 left-4 opacity-20 z-0 transform -rotate-90">
+    <h4 class="heading text-lg font-bold" style="color: var(--text-primary); font-family: 'Doto', 'Sixtyfour', monospace;">
+      DEVELOPER
+    </h4>
+  </div>
+
+  <!-- Pixel Grid Background -->
+  <div class="fixed inset-0 pixel-grid opacity-10 -z-10 pointer-events-none"></div>
+</BaseLayout>

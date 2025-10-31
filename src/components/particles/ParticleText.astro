@@ -1,0 +1,174 @@
+---
+interface Props {
+  text: string;
+  class?: string;
+  particleColor?: string;
+  particleCount?: number;
+  triggerOnHover?: boolean;
+  fontSize?: number;
+  id?: string;
+}
+
+const {
+  text,
+  class: className = '',
+  particleColor = '#00ff00',
+  particleCount = 50,
+  triggerOnHover = true,
+  fontSize = 48,
+  id = 'particle-text-' + Math.random().toString(36).substr(2, 9)
+} = Astro.props;
+
+const uniqueId = id;
+---
+
+<div
+  id={uniqueId}
+  class={`relative inline-block particle-text-container ${className}`}
+  data-text={text}
+  data-particle-color={particleColor}
+  data-particle-count={particleCount}
+  data-trigger-on-hover={triggerOnHover ? 'true' : 'false'}
+  data-font-size={fontSize}
+  style={`font-size: ${fontSize}px;`}
+>
+  <canvas
+    class="particle-canvas absolute top-0 left-0 w-full h-full pointer-events-none"
+    style="image-rendering: pixelated;"
+  ></canvas>
+  <span
+    class="pixel-text"
+    style={`
+      color: ${particleColor};
+      text-shadow:
+        0 0 10px ${particleColor},
+        0 0 20px ${particleColor},
+        0 0 30px ${particleColor},
+        2px 2px 0 #fff,
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000;
+    `}
+  >
+    {text}
+  </span>
+</div>
+
+<script define:vars={{ uniqueId, particleColor, particleCount, triggerOnHover }}>
+  class ParticleText {
+    constructor(containerId, particleColor, particleCount, triggerOnHover) {
+      this.container = document.getElementById(containerId);
+      this.canvas = this.container.querySelector('canvas');
+      this.ctx = this.canvas.getContext('2d');
+      this.particleColor = particleColor;
+      this.particleCount = particleCount;
+      this.triggerOnHover = triggerOnHover;
+      this.particles = [];
+      this.animationId = null;
+
+      this.init();
+    }
+
+    init() {
+      if (!this.container || !this.canvas) return;
+
+      // Set canvas size
+      const rect = this.container.getBoundingClientRect();
+      this.canvas.width = rect.width;
+      this.canvas.height = rect.height;
+
+      // Setup event listeners
+      if (this.triggerOnHover) {
+        this.container.addEventListener('click', (e) => this.explodeParticles(e));
+        this.container.style.cursor = 'pointer';
+      } else {
+        // Auto-explode effect
+        this.autoExplodeInterval = setInterval(() => {
+          const randomX = Math.random() * this.canvas.width;
+          const randomY = Math.random() * this.canvas.height;
+          this.createParticles(randomX, randomY);
+        }, 1000);
+      }
+
+      this.animate();
+    }
+
+    createParticles(x, y) {
+      for (let i = 0; i < this.particleCount; i++) {
+        const angle = (Math.PI * 2 * i) / this.particleCount;
+        const velocity = 2 + Math.random() * 4;
+        this.particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * velocity,
+          vy: Math.sin(angle) * velocity,
+          size: 2 + Math.random() * 4,
+          color: this.particleColor,
+          life: 1.0
+        });
+      }
+    }
+
+    explodeParticles(e) {
+      const rect = this.container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      this.createParticles(x, y);
+    }
+
+    updateParticles() {
+      this.particles = this.particles
+        .map(particle => ({
+          ...particle,
+          x: particle.x + particle.vx,
+          y: particle.y + particle.vy,
+          vy: particle.vy + 0.1, // gravity
+          life: particle.life - 0.02
+        }))
+        .filter(particle => particle.life > 0);
+    }
+
+    drawParticles() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.particles.forEach(particle => {
+        this.ctx.save();
+        this.ctx.globalAlpha = particle.life;
+        this.ctx.fillStyle = particle.color;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = particle.color;
+
+        // Draw pixelated particle
+        const pixelSize = Math.max(1, Math.floor(particle.size));
+        this.ctx.fillRect(
+          Math.floor(particle.x / pixelSize) * pixelSize,
+          Math.floor(particle.y / pixelSize) * pixelSize,
+          pixelSize,
+          pixelSize
+        );
+
+        this.ctx.restore();
+      });
+    }
+
+    animate() {
+      this.updateParticles();
+      this.drawParticles();
+      this.animationId = requestAnimationFrame(() => this.animate());
+    }
+
+    destroy() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+      if (this.autoExplodeInterval) {
+        clearInterval(this.autoExplodeInterval);
+      }
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.getElementById(uniqueId)) {
+    new ParticleText(uniqueId, particleColor, particleCount, triggerOnHover);
+  }
+</script>

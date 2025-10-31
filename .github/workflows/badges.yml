@@ -1,0 +1,52 @@
+name: Update Badges
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 1'  # Run weekly on Monday at 00:00 UTC
+
+jobs:
+  update-badges:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update badges
+      run: |
+        # Update license badge
+        sed -i 's|https://img\.shields\.io/badge/License-.*|https://img.shields.io/badge/License-MIT-yellow.svg|g' README.md
+
+        # Update version badge
+        VERSION=$(node -p "require('./package.json').version")
+        sed -i "s|version-${VERSION}|version-${VERSION}|g" README.md
+
+        # Update stars count
+        STARS=$(curl -s https://api.github.com/repos/Jindequan/pixel-astro-theme | jq '.stargazers_count')
+        sed -i "s|stars-\([0-9]*\)|stars-${STARS}|g" README.md
+
+        # Update forks count
+        FORKS=$(curl -s https://api.github.com/repos/Jindequan/pixel-astro-theme | jq '.forks_count')
+        sed -i "s|forks-\([0-9]*\)|forks-${FORKS}|g" README.md
+
+        # Update last commit date
+        LAST_COMMIT=$(git log -1 --format=%cd --date=short)
+        sed -i "s|last-commit-.*|last-commit-${LAST_COMMIT}|g" README.md
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add README.md
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "chore: update badges [skip ci]"
+          git push
+        fi

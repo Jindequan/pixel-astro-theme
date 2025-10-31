@@ -1,0 +1,265 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import { getSiteConfig } from '../config/site';
+
+const siteConfig = getSiteConfig();
+const ogImageUrl = `/api/og-image.png?title=${encodeURIComponent('DEMO')}&description=${encodeURIComponent(`${siteConfig.siteName} FEATURES`)}&particleColor=${encodeURIComponent(siteConfig.themeColors.primary)}`;
+---
+
+<BaseLayout
+  title="Demo"
+  description={`${siteConfig.siteName} feature demo - pixel style display`}
+  ogImage={ogImageUrl}
+  particleColor={siteConfig.themeColors.primary}
+>
+  <Header />
+
+  <main class="max-w-6xl mx-auto py-16">
+    <!-- Hero Section -->
+    <section class="text-center mb-16">
+      <h1 class="pixel-title-green text-6xl mb-4">
+        THEME DEMO
+      </h1>
+
+      <h2 class="pixel-title-cyan text-4xl mb-8">
+        COMPLETE FEATURE SHOWCASE
+      </h2>
+
+      <p class="pixel-text-white text-xl mb-8 opacity-80 max-w-2xl mx-auto">
+        Explore all features of Pixel Astro theme and experience true pixel aesthetics
+      </p>
+    </section>
+
+    <!-- Article Showcase -->
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="pixel-title-yellow text-5xl mb-4">
+          DEMO ARTICLES
+        </h2>
+      </div>
+
+      <div class="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+        <!-- Article 1 -->
+        <div class="pixel-card p-6">
+          <h3 class="pixel-title-green text-2xl mb-4">
+            Multimedia Integration
+          </h3>
+          <div class="py-4 text-center">
+            <p class="pixel-text-green text-3xl font-bold">
+              MEDIA SHOWCASE
+            </p>
+          </div>
+          <p class="pixel-text-white opacity-80 text-sm mb-4">
+            Complete guide to embedding images, audio, YouTube and Bilibili videos. Learn how to create rich multimedia content with pixel-perfect styling.
+          </p>
+          <div class="py-2 mb-4">
+            <span class="inline-block px-3 py-1 text-xs font-bold mr-2 mb-2" style={`background-color: ${siteConfig.themeColors.primary}; color: #000000;`}>MULTIMEDIA</span>
+            <span class="inline-block px-3 py-1 text-xs font-bold mr-2 mb-2" style={`background-color: ${siteConfig.themeColors.secondary}; color: #000000;`}>VIDEO</span>
+            <span class="inline-block px-3 py-1 text-xs font-bold mb-2" style={`background-color: ${siteConfig.themeColors.accent}; color: #ffffff;`}>AUDIO</span>
+          </div>
+          <a
+            href="/articles/multimedia-showcase"
+            class="inline-block px-6 py-3 border-2 font-bold hover:bg-white hover:text-black transition-colors"
+            style={`border-color: ${siteConfig.themeColors.primary}; color: ${siteConfig.themeColors.primary};`}
+          >
+            READ MORE
+          </a>
+        </div>
+
+        <!-- Article 2 -->
+        <div class="pixel-card p-6">
+          <h3 class="pixel-title-magenta text-2xl mb-4">
+            Astro Framework Features
+          </h3>
+          <div class="py-4 text-center">
+            <p class="pixel-text-magenta text-3xl font-bold">
+              FRAMEWORK GUIDE
+            </p>
+          </div>
+          <p class="pixel-text-white opacity-80 text-sm mb-4">
+            Complete overview of Astro framework features and our theme capabilities. From Islands Architecture to performance optimization.
+          </p>
+          <div class="py-2 mb-4">
+            <span class="inline-block px-3 py-1 text-xs font-bold mr-2 mb-2" style={`background-color: #ff0066; color: #ffffff;`}>ASTRO</span>
+            <span class="inline-block px-3 py-1 text-xs font-bold mr-2 mb-2" style={`background-color: #ff6b35; color: #ffffff;`}>FEATURES</span>
+            <span class="inline-block px-3 py-1 text-xs font-bold mb-2" style={`background-color: #dc2626; color: #ffffff;`}>TECH</span>
+          </div>
+          <a
+            href="/articles/astro-features"
+            class="inline-block px-6 py-3 border-2 font-bold hover:bg-white hover:text-black transition-colors"
+            style={`border-color: ${siteConfig.themeColors.accent}; color: ${siteConfig.themeColors.accent};`}
+          >
+            READ MORE
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Theme Features Showcase -->
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="pixel-title-cyan text-5xl mb-4">
+          THEME FEATURES
+        </h2>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="pixel-card p-6 text-center">
+          <h3 class="pixel-title-green mb-4">
+            DOTO FONT
+          </h3>
+          <div class="py-4">
+            <p class="pixel-text-green text-xl font-bold">
+              PIXEL STYLE
+            </p>
+          </div>
+          <p class="pixel-text-white opacity-80 text-sm">
+            Using Google Fonts' Doto font for perfect pixel style appearance
+          </p>
+        </div>
+
+        <div class="pixel-card p-6 text-center">
+          <h3 class="pixel-title-cyan mb-4">
+            RESPONSIVE DESIGN
+          </h3>
+          <div class="py-4">
+            <p class="pixel-text-cyan text-xl font-bold">
+              MOBILE READY
+            </p>
+          </div>
+          <p class="pixel-text-white opacity-80 text-sm">
+            Fully adapted for various device sizes, ensuring excellent mobile display
+          </p>
+        </div>
+
+        <div class="pixel-card p-6 text-center">
+          <h3 class="pixel-title-yellow mb-4">
+            PERFORMANCE OPTIMIZED
+          </h3>
+          <div class="py-4">
+            <p class="pixel-text-yellow text-xl font-bold">
+              LIGHTNING FAST
+            </p>
+          </div>
+          <p class="pixel-text-white opacity-80 text-sm">
+            Static generation, fast loading, providing smooth browsing experience
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pixel Styles Showcase -->
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="pixel-title-cyan text-5xl mb-4">
+          PIXEL STYLES
+        </h2>
+      </div>
+
+      <div class="pixel-card p-8">
+        <div class="space-y-8">
+          <!-- Title Styles -->
+          <div class="text-center">
+            <h3 class="pixel-text-white text-lg mb-4">TITLE STYLES</h3>
+            <div class="space-y-4">
+              <p class="pixel-title-green">LARGE TITLE STYLE</p>
+              <p class="pixel-title-cyan">MEDIUM TITLE STYLE</p>
+              <p class="pixel-title-magenta">SMALL TITLE STYLE</p>
+            </div>
+          </div>
+
+          <!-- Text Styles -->
+          <div class="text-center">
+            <h3 class="pixel-text-white text-lg mb-4">TEXT STYLES</h3>
+            <div class="space-y-2">
+              <p class="pixel-text-green">GREEN TEXT CONTENT</p>
+              <p class="pixel-text-cyan">CYAN TEXT CONTENT</p>
+              <p class="pixel-text-magenta">MAGENTA TEXT CONTENT</p>
+              <p class="pixel-text-yellow">YELLOW TEXT CONTENT</p>
+            </div>
+          </div>
+
+          <!-- Color Display -->
+          <div class="text-center">
+            <h3 class="pixel-text-white text-lg mb-4">AVAILABLE COLORS</h3>
+            <div class="flex flex-wrap justify-center gap-2">
+              <div class="px-4 py-2 font-bold" style={`background-color: ${siteConfig.themeColors.secondary}; color: #000000;`}>CYAN</div>
+              <div class="px-4 py-2 font-bold" style={`background-color: ${siteConfig.themeColors.primary}; color: #000000;`}>GREEN</div>
+              <div class="px-4 py-2 font-bold" style={`background-color: ${siteConfig.themeColors.accent}; color: #ffffff;`}>ORANGE</div>
+              <div class="px-4 py-2 font-bold" style={`background-color: #ffcc00; color: #000000;`}>YELLOW</div>
+              <div class="px-4 py-2 font-bold" style={`background-color: #ff0066; color: #ffffff;`}>MAGENTA</div>
+              <div class="px-4 py-2 font-bold" style={`background-color: #dc2626; color: #ffffff;`}>RED</div>
+              <div class="px-4 py-2 font-bold" style={`background-color: #0066ff; color: #ffffff;`}>BLUE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Features -->
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="pixel-title-orange text-5xl mb-4">
+          INTERACTIVE FEATURES
+        </h2>
+      </div>
+
+      <div class="max-w-2xl mx-auto">
+        <div class="pixel-card p-8">
+          <div class="text-center space-y-6">
+            <h3 class="pixel-title-orange">
+              Try These Interactive Features
+            </h3>
+            <div class="py-8">
+              <p class="pixel-text-orange text-3xl font-bold">
+                TRY IT OUT
+              </p>
+            </div>
+            <div class="pixel-text-white space-y-2">
+              <p>• Adjust the font size slider in the header for global scaling</p>
+              <p>• Click the day/night toggle to experience theme changes</p>
+              <p>• All text uses Doto font with pixel style effects</p>
+              <p>• Simple CSS classes for instant pixel effects</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Get Started -->
+    <section class="text-center">
+      <div class="max-w-2xl mx-auto">
+        <div class="pixel-card p-8">
+          <h3 class="pixel-title-green mb-4">
+            Get Started With Pixel Astro Theme
+          </h3>
+          <p class="pixel-text-white mb-6">
+            Use simple CSS classes to quickly create pixel-style content
+          </p>
+          <div class="bg-black text-green-400 p-4 rounded font-mono text-sm mb-6 text-left">
+            <p>&lt;h1 class="pixel-title-cyan"&gt;TITLE&lt;/h1&gt;</p>
+            <p>&lt;p class="pixel-text-green"&gt;TEXT CONTENT&lt;/p&gt;</p>
+            <p>&lt;div class="pixel-card"&gt;CARD CONTAINER&lt;/div&gt;</p>
+          </div>
+          <div class="flex gap-4 justify-center">
+            <a
+              href="/"
+              class="inline-block px-6 py-3 border-2 font-bold hover:bg-white hover:text-black transition-colors"
+              style={`border-color: ${siteConfig.themeColors.primary}; color: ${siteConfig.themeColors.primary};`}
+            >
+              BACK TO HOME
+            </a>
+            <a
+              href="/docs"
+              class="inline-block px-6 py-3 border-2 font-bold hover:bg-white hover:text-black transition-colors"
+              style={`border-color: ${siteConfig.themeColors.secondary}; color: ${siteConfig.themeColors.secondary};`}
+            >
+              VIEW DOCS
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

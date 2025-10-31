@@ -1,0 +1,271 @@
+---
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  maxPagesToShow?: number;
+}
+
+const {
+  currentPage,
+  totalPages,
+  baseUrl,
+  maxPagesToShow = 7
+} = Astro.props;
+
+// Calculate page range to show
+function calculatePageRange(current: number, total: number, max: number): number[] {
+  if (total <= max) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const half = Math.floor(max / 2);
+  let start = Math.max(1, current - half);
+  let end = Math.min(total, start + max - 1);
+
+  // Adjust if we're near the beginning or end
+  if (end - start + 1 < max) {
+    start = Math.max(1, end - max + 1);
+  }
+
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+const pages = calculatePageRange(currentPage, totalPages, maxPagesToShow);
+const hasPrevious = currentPage > 1;
+const hasNext = currentPage < totalPages;
+const hasFirstPage = pages[0] > 1;
+const hasLastPage = pages[pages.length - 1] < totalPages;
+
+function createPageUrl(page: number): string {
+  if (page === 1) {
+    return baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  }
+  return `${baseUrl}/page/${page}`;
+}
+
+function getPreviousPageUrl(): string {
+  return createPageUrl(currentPage - 1);
+}
+
+function getNextPageUrl(): string {
+  return createPageUrl(currentPage + 1);
+}
+---
+
+<nav class="pagination-nav" aria-label="Pagination navigation">
+  <div class="pixel-card flex items-center justify-center gap-4 py-8">
+    <!-- Previous Button -->
+    {hasPrevious && (
+      <a
+        href={getPreviousPageUrl()}
+        class="pagination-button prev-button"
+        aria-label="Go to previous page"
+      >
+        <span class="pixel-text pixel-normal">←</span>
+      </a>
+    )}
+
+    <!-- First Page -->
+    {hasFirstPage && (
+      <a
+        href={createPageUrl(1)}
+        class="pagination-link"
+        aria-label="Go to first page"
+      >
+        <span class="pixel-text pixel-normal">1</span>
+      </a>
+    )}
+
+    <!-- First Ellipsis -->
+    {hasFirstPage && pages[0] > 2 && (
+      <span class="pagination-ellipsis pixel-text pixel-normal opacity-60">...</span>
+    )}
+
+    <!-- Page Numbers -->
+    {pages.map((page) => (
+      <a
+        href={createPageUrl(page)}
+        class={`pagination-link ${page === currentPage ? 'active' : ''}`}
+        aria-label={`Go to page ${page}`}
+        aria-current={page === currentPage ? 'page' : undefined}
+      >
+        <span class="pixel-text pixel-normal">{page}</span>
+      </a>
+    ))}
+
+    <!-- Last Ellipsis -->
+    {hasLastPage && pages[pages.length - 1] < totalPages - 1 && (
+      <span class="pagination-ellipsis pixel-text pixel-normal opacity-60">...</span>
+    )}
+
+    <!-- Last Page -->
+    {hasLastPage && (
+      <a
+        href={createPageUrl(totalPages)}
+        class="pagination-link"
+        aria-label="Go to last page"
+      >
+        <span class="pixel-text pixel-normal">{totalPages}</span>
+      </a>
+    )}
+
+    <!-- Next Button -->
+    {hasNext && (
+      <a
+        href={getNextPageUrl()}
+        class="pagination-button next-button"
+        aria-label="Go to next page"
+      >
+        <span class="pixel-text pixel-normal">→</span>
+      </a>
+    )}
+  </div>
+
+  <!-- Page Info -->
+  <div class="text-center mt-6">
+    <span class="pixel-text pixel-normal opacity-80">
+      Page {currentPage} of {totalPages}
+    </span>
+  </div>
+</nav>
+
+<style>
+  .pagination-nav {
+    margin: 2rem 0;
+  }
+
+  .pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.25rem;
+    border: 2px solid var(--border-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    font-weight: bold;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  .pagination-link:hover {
+    transform: scale(1.1);
+  }
+
+  .pagination-link.active {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color);
+    transform: scale(1.1);
+  }
+
+  .pagination-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+    border: 2px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    font-weight: bold;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  .pagination-button:hover {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px var(--primary-color);
+  }
+
+  .pagination-ellipsis {
+    padding: 0 0.5rem;
+    user-select: none;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .pagination-nav {
+      padding: 0 1rem;
+    }
+
+    .pagination-link,
+    .pagination-button {
+      min-width: 36px;
+      height: 36px;
+      padding: 0.25rem 0.5rem;
+      margin: 0 0.125rem;
+      font-size: 0.875rem;
+    }
+
+    .pagination-link.active {
+      transform: scale(1.05);
+    }
+
+    .pagination-button:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Very Small Screens */
+  @media (max-width: 480px) {
+    .pagination-link,
+    .pagination-button {
+      min-width: 32px;
+      height: 32px;
+      padding: 0.125rem 0.25rem;
+      margin: 0 0.0625rem;
+      font-size: 0.75rem;
+    }
+
+    .pagination-link.active {
+      transform: scale(1.02);
+    }
+
+    .pagination-button:hover {
+      transform: scale(1.02);
+    }
+
+    .pagination-ellipsis {
+      font-size: 0.75rem;
+    }
+  }
+
+  /* Animation Effects */
+  @keyframes pixel-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 0 currentColor);
+    }
+    50% {
+      filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor);
+    }
+  }
+
+  .pagination-link:hover {
+    animation: pixel-glow 2s ease-in-out infinite;
+  }
+
+  .pagination-button:hover {
+    animation: pixel-glow 2s ease-in-out infinite;
+  }
+
+  /* Focus Styles */
+  .pagination-link:focus,
+  .pagination-button:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+</style>

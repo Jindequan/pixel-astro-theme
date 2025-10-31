@@ -1,0 +1,326 @@
+---
+export interface Props {
+  images: Array<{
+    src: string;
+    alt: string;
+    caption?: string;
+  }>;
+  columns?: number;
+  className?: string;
+}
+
+const { images, columns = 3, className = "" } = Astro.props;
+
+// Generate unique IDs for modal functionality
+const galleryId = `gallery-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<!-- Pixel Gallery Grid -->
+<div class={`pixel-gallery ${className}`}>
+  <div class="gallery-grid" style={`grid-template-columns: repeat(${columns}, 1fr);`}>
+    {images.map((image, index) => (
+      <div class="gallery-item" data-index={index}>
+        <div class="image-wrapper pixel-card">
+          <img
+            src={image.src}
+            alt={image.alt}
+            class="gallery-image"
+            loading="lazy"
+            onclick={`openModal('${galleryId}', ${index})`}
+          />
+          {image.caption && (
+            <div class="image-caption">
+              <p class="pixel-text text-xs opacity-80 text-center p-2">
+                {image.caption}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Modal for Fullscreen View -->
+  <div id={`${galleryId}-modal`} class="gallery-modal" onclick={`closeModal('${galleryId}')`}>
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button
+        class="modal-close pixel-button"
+        onclick={`closeModal('${galleryId}')`}
+      >
+        ×
+      </button>
+
+      <div class="modal-image-container">
+        {images.map((image, index) => (
+          <img
+            src={image.src}
+            alt={image.alt}
+            class="modal-image"
+            data-index={index}
+            style={`display: ${index === 0 ? 'block' : 'none'};`}
+          />
+        ))}
+      </div>
+
+      {images.length > 1 && (
+        <div class="modal-navigation">
+          <button
+            class="nav-button pixel-button"
+            onclick={`navigateGallery('${galleryId}', -1)`}
+          >
+            ‹
+          </button>
+          <div class="nav-counter">
+            <span class="pixel-text text-sm">
+              <span id={`${galleryId}-current`}>1</span> / {images.length}
+            </span>
+          </div>
+          <button
+            class="nav-button pixel-button"
+            onclick={`navigateGallery('${galleryId}', 1)`}
+          >
+            ›
+          </button>
+        </div>
+      )}
+
+      {images.some(img => img.caption) && (
+        <div class="modal-caption">
+          <p class="pixel-text opacity-80 text-center" id={`${galleryId}-caption`}>
+            {images[0]?.caption || image.alt}
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+  .pixel-gallery {
+    width: 100%;
+  }
+
+  .gallery-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-wrapper {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .gallery-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    transition: all 0.2s ease;
+  }
+
+  .image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    backdrop-filter: blur(4px);
+  }
+
+  .image-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px currentColor;
+  }
+
+  .image-wrapper:hover .gallery-image {
+    transform: scale(1.05);
+  }
+
+  /* Modal Styles */
+  .gallery-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    background: var(--card-bg, rgba(10, 10, 10, 0.95));
+    border: 3px solid currentColor;
+    padding: 1rem;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    z-index: 1001;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .modal-image-container {
+    position: relative;
+    max-width: 80vw;
+    max-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  .modal-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.5rem 1rem;
+    font-size: 1.5rem;
+    min-width: 50px;
+  }
+
+  .nav-counter {
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .modal-caption {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .gallery-image {
+      height: 150px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .gallery-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .modal-content {
+      max-width: 95vw;
+      padding: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  // Gallery functionality
+  window.galleries = window.galleries || {};
+
+  function openModal(galleryId, startIndex = 0) {
+    const modal = document.getElementById(`${galleryId}-modal`);
+    if (!modal) return;
+
+    window.galleries[galleryId] = { currentIndex: startIndex };
+
+    modal.style.display = 'flex';
+    updateModalImage(galleryId);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(galleryId) {
+    const modal = document.getElementById(`${galleryId}-modal`);
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  }
+
+  function navigateGallery(galleryId, direction) {
+    const gallery = window.galleries[galleryId];
+    if (!gallery) return;
+
+    const modalImages = document.querySelectorAll(`#${galleryId}-modal .modal-image`);
+    const totalImages = modalImages.length;
+
+    gallery.currentIndex = (gallery.currentIndex + direction + totalImages) % totalImages;
+    updateModalImage(galleryId);
+  }
+
+  function updateModalImage(galleryId) {
+    const gallery = window.galleries[galleryId];
+    if (!gallery) return;
+
+    const modalImages = document.querySelectorAll(`#${galleryId}-modal .modal-image`);
+    const currentSpan = document.getElementById(`${galleryId}-current`);
+    const captionSpan = document.getElementById(`${galleryId}-caption`);
+    const galleryImages = document.querySelectorAll(`#${galleryId} .gallery-image`);
+
+    modalImages.forEach((img, index) => {
+      img.style.display = index === gallery.currentIndex ? 'block' : 'none';
+    });
+
+    if (currentSpan) {
+      currentSpan.textContent = gallery.currentIndex + 1;
+    }
+
+    if (captionSpan && galleryImages[gallery.currentIndex]) {
+      const imageWrapper = galleryImages[gallery.currentIndex].closest('.gallery-item');
+      const caption = imageWrapper.querySelector('.image-caption p');
+      if (caption) {
+        captionSpan.textContent = caption.textContent;
+      }
+    }
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const activeModal = document.querySelector('.gallery-modal[style*="flex"]');
+    if (!activeModal) return;
+
+    const galleryId = activeModal.id.replace('-modal', '');
+
+    switch (e.key) {
+      case 'Escape':
+        closeModal(galleryId);
+        break;
+      case 'ArrowLeft':
+        navigateGallery(galleryId, -1);
+        break;
+      case 'ArrowRight':
+        navigateGallery(galleryId, 1);
+        break;
+    }
+  });
+</script>

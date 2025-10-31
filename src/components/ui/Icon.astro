@@ -1,0 +1,169 @@
+---
+export interface Props {
+  name: string;
+  size?: number | string;
+  class?: string;
+  color?: string;
+}
+
+const { name, size = 16, class: className = '', color = 'currentColor' } = Astro.props;
+
+const icons = {
+  // Social Media Icons
+  github: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" fill="${color}"/>
+  </svg>`,
+
+  x: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" fill="${color}"/>
+  </svg>`,
+
+  bilibili: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.223 3.086a1.25 1.25 0 0 1 0 1.768L17.08 5.996h1.17A3.75 3.75 0 0 1 22 9.746v7.5a3.75 3.75 0 0 1-3.75 3.75H5.75A3.75 3.75 0 0 1 2 17.246v-7.5a3.75 3.75 0 0 1 3.75-3.75h1.17L5.777 4.854a1.25 1.25 0 1 1 1.768-1.768l3.536 3.535L12.407 3.86a3.75 3.75 0 0 1 5.304 0l3.742 3.742 1.77-1.77a1.25 1.25 0 0 1 1.768 0Zm-2.828 4.242L12 4.134l-3.395 3.395a3.75 3.75 0 0 1-5.304 0l-.848-.848H5.75a1.25 1.25 0 0 0-1.25 1.25v7.5a1.25 1.25 0 0 0 1.25 1.25h12.5a1.25 1.25 0 0 0 1.25-1.25v-7.5a1.25 1.25 0 0 0-1.25-1.25h-.703l-.848.848a3.75 3.75 0 0 1-5.304 0ZM9 11.246a1.25 1.25 0 1 1 2.5 0 2.5 2.5 0 0 1 2.5 2.5 1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1-2.5 0Z" fill="${color}"/>
+  </svg>`,
+
+  kofi: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H7.5c-.42 0-1.055.272-1.418.667-.363.395-.566.928-.566 1.486v8.818c0 .558.203 1.091.566 1.486.363.395.998.667 1.418.667h11.523s4.085.508 4.859-4.593c.773-5.101-.501-7.538-.501-7.538zM9.545 15.568V9.527l2.322 2.322 2.322-2.322v6.041h-2.322l-2.322-2.322-2.322 2.322H9.545zm11.523 0h-2.322V9.527h2.322v6.041z" fill="${color}"/>
+  </svg>`,
+
+  email: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="${color}" stroke-width="2" fill="none"/>
+    <polyline points="22,6 12,13 2,6" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  // Navigation & UI Icons
+  home: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="${color}" stroke-width="2" fill="none"/>
+    <polyline points="9,22 9,12 15,12 15,22" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  user: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="${color}" stroke-width="2" fill="none"/>
+    <circle cx="12" cy="7" r="4" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  calendar: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="${color}" stroke-width="2" fill="none"/>
+    <line x1="16" y1="2" x2="16" y2="6" stroke="${color}" stroke-width="2"/>
+    <line x1="8" y1="2" x2="8" y2="6" stroke="${color}" stroke-width="2"/>
+    <line x1="3" y1="10" x2="21" y2="10" stroke="${color}" stroke-width="2"/>
+  </svg>`,
+
+  event: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="${color}" stroke-width="2" fill="none"/>
+    <line x1="16" y1="2" x2="16" y2="6" stroke="${color}" stroke-width="2"/>
+    <line x1="8" y1="2" x2="8" y2="6" stroke="${color}" stroke-width="2"/>
+    <line x1="3" y1="10" x2="21" y2="10" stroke="${color}" stroke-width="2"/>
+    <circle cx="8.5" cy="14.5" r="1.5" fill="${color}"/>
+    <circle cx="15.5" cy="14.5" r="1.5" fill="${color}"/>
+    <circle cx="8.5" cy="18.5" r="1.5" fill="${color}"/>
+    <circle cx="15.5" cy="18.5" r="1.5" fill="${color}"/>
+  </svg>`,
+
+  tag: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" stroke="${color}" stroke-width="2" fill="none"/>
+    <line x1="7" y1="7" x2="7.01" y2="7" stroke="${color}" stroke-width="2"/>
+  </svg>`,
+
+  search: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="11" cy="11" r="8" stroke="${color}" stroke-width="2" fill="none"/>
+    <path d="m21 21-4.35-4.35" stroke="${color}" stroke-width="2"/>
+  </svg>`,
+
+  menu: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="3" y1="12" x2="21" y2="12" stroke="${color}" stroke-width="2"/>
+    <line x1="3" y1="6" x2="21" y2="6" stroke="${color}" stroke-width="2"/>
+    <line x1="3" y1="18" x2="21" y2="18" stroke="${color}" stroke-width="2"/>
+  </svg>`,
+
+  close: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="18" y1="6" x2="6" y2="18" stroke="${color}" stroke-width="2"/>
+    <line x1="6" y1="6" x2="18" y2="18" stroke="${color}" stroke-width="2"/>
+  </svg>`,
+
+  chevronLeft: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="15,18 9,12 15,6" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  chevronRight: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="9,18 15,12 9,6" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  externalLink: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="${color}" stroke-width="2" fill="none"/>
+    <polyline points="15,3 21,3 21,9" stroke="${color}" stroke-width="2" fill="none"/>
+    <line x1="10" y1="14" x2="21" y2="3" stroke="${color}" stroke-width="2"/>
+  </svg>`,
+
+  star: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  clock: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke="${color}" stroke-width="2" fill="none"/>
+    <polyline points="12,6 12,12 16,14" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  book: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="${color}" stroke-width="2" fill="none"/>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  code: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="16,18 22,12 16,6" stroke="${color}" stroke-width="2" fill="none"/>
+    <polyline points="8,6 2,12 8,18" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  link: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="${color}" stroke-width="2" fill="none"/>
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  filter: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  download: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="${color}" stroke-width="2" fill="none"/>
+    <polyline points="7,10 12,15 17,10" stroke="${color}" stroke-width="2" fill="none"/>
+    <line x1="12" y1="15" x2="12" y2="3" stroke="${color}" stroke-width="2"/>
+  </svg>`,
+
+  heart: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="${color}" stroke-width="2" fill="none"/>
+  </svg>`,
+
+  settings: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="3" stroke="${color}" stroke-width="2" fill="none"/>
+    <path d="m12 1 1.27 2.78L16 4l-1.27 2.78L16 9l-2.73-1.22L12 9l-1.27-2.22L8 6l1.27-2.22L8 2l2.73 1.22L12 1z" stroke="${color}" stroke-width="2" fill="none" transform="rotate(0 12 12)"/>
+    <path d="m12 1 1.27 2.78L16 4l-1.27 2.78L16 9l-2.73-1.22L12 9l-1.27-2.22L8 6l1.27-2.22L8 2l2.73 1.22L12 1z" stroke="${color}" stroke-width="2" fill="none" transform="rotate(90 12 12)"/>
+    <path d="m12 1 1.27 2.78L16 4l-1.27 2.78L16 9l-2.73-1.22L12 9l-1.27-2.22L8 6l1.27-2.22L8 2l2.73 1.22L12 1z" stroke="${color}" stroke-width="2" fill="none" transform="rotate(180 12 12)"/>
+    <path d="m12 1 1.27 2.78L16 4l-1.27 2.78L16 9l-2.73-1.22L12 9l-1.27-2.22L8 6l1.27-2.22L8 2l2.73 1.22L12 1z" stroke="${color}" stroke-width="2" fill="none" transform="rotate(270 12 12)"/>
+  </svg>`,
+};
+
+const iconHTML = icons[name] || icons['externalLink'];
+---
+
+<div class={`icon ${className}`} set:html={iconHTML} />
+
+<style>
+  .icon {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 0;
+    transition: all 0.2s ease;
+  }
+
+  .icon:hover {
+    transform: scale(1.1);
+  }
+
+  /* Pixel-perfect rendering for sharp icons */
+  .icon svg {
+    shape-rendering: crispEdges;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+</style>

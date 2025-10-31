@@ -1,0 +1,685 @@
+---
+import { getSiteConfig } from '../../config/site';
+
+export interface Props {
+  navigation?: Array<{ href: string; label: string; active?: boolean }>;
+  particleColor?: string;
+}
+
+const {
+  navigation = [
+    { href: "/", label: "HOME", active: false },
+    { href: "/about", label: "ABOUT", active: false },
+    { href: "/demo", label: "DEMO", active: false },
+    { href: "/articles", label: "ARTICLES", active: false }
+  ],
+  particleColor
+} = Astro.props;
+
+// Get site configuration
+const siteConfig = getSiteConfig();
+const siteTitle = siteConfig.siteName;
+const finalParticleColor = particleColor || siteConfig.themeColors.primary;
+
+// Get current page path to determine active state
+const currentPath = Astro.url.pathname;
+const navigationWithActive = navigation.map(item => ({
+  ...item,
+  active: item.href === currentPath
+}));
+---
+
+<header class="pixel-border backdrop-blur-sm sticky top-0 z-50" style="background-color: var(--bg-overlay);">
+  <nav class="container mx-auto px-4 py-4">
+    <div class="flex justify-between items-center">
+      <!-- Logo/Site Title -->
+      <a href="/" class="group relative">
+        <div class="transition-all duration-300 group-hover:scale-110">
+          <h1 class="site-title text-4xl font-bold" style="color: var(--text-primary); font-family: 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.3);">
+            {siteTitle}
+          </h1>
+        </div>
+        <!-- Hover particle effect -->
+        <div class="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div class="particle-hover-effect"></div>
+        </div>
+      </a>
+
+      <!-- Navigation Menu -->
+      <ul class="flex space-x-6">
+        {navigationWithActive.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="relative px-2 py-2 transition-all duration-300 group"
+            >
+              <div class={`
+                transition-all duration-300
+                ${item.active
+                  ? 'scale-110'
+                  : 'hover:scale-110'
+                }
+              `}>
+                <span
+                  class="heading text-lg font-bold"
+                  style={`
+                    color: var(--text-primary);
+                    font-family: 'Doto', 'Sixtyfour', monospace;
+                    text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+                    ${item.active ? `filter: drop-shadow(0 0 10px var(--pixel-cyan));` : ''}
+                  `}
+                >
+                  {item.label}
+                </span>
+              </div>
+
+              <!-- Active state indicator -->
+              {item.active && (
+                <div
+                  class="absolute -bottom-1 left-0 w-full h-1 animate-pulse"
+                  style="background-color: var(--pixel-cyan); box-shadow: 0 0 10px var(--pixel-cyan);"
+                ></div>
+              )}
+
+              <!-- Hover particle effect -->
+              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="particle-hover-effect"></div>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Control Panel -->
+      <div class="flex items-center space-x-4">
+        <!-- Font Size Slider -->
+        <div class="flex items-center space-x-3">
+          <span class="heading text-xs opacity-70" style={`color: var(--text-secondary); font-family: 'Doto', 'Sixtyfour', monospace;`}>
+            A
+          </span>
+          <div class="relative">
+            <!-- Retro Pixel Slider -->
+            <div class="retro-slider-container" style={`
+              width: 100px;
+              height: 20px;
+              position: relative;
+              cursor: pointer;
+              image-rendering: pixelated;
+              image-rendering: -moz-crisp-edges;
+              image-rendering: crisp-edges;
+            `}>
+              <!-- Slider Background - 8-bit style -->
+              <div style={`
+                position: absolute;
+                top: 6px;
+                left: 0;
+                width: 100px;
+                height: 8px;
+                background-color: var(--bg-secondary);
+                border: 2px solid var(--border-primary);
+                box-shadow:
+                  inset -2px -2px 0 var(--shadow),
+                  inset 2px 2px 0 rgba(255,255,255,0.1);
+              `}></div>
+
+              <!-- Progress Fill - Pixel perfect -->
+              <div class="slider-fill" id="slider-fill" style={`
+                position: absolute;
+                top: 8px;
+                left: 2px;
+                height: 4px;
+                background: linear-gradient(180deg,
+                  var(--pixel-cyan) 0%,
+                  var(--pixel-green) 100%);
+                width: calc(var(--progress, 50%) * 96px / 100);
+                transition: width 0.1s ease;
+                box-shadow: 0 0 4px var(--pixel-cyan);
+              `}></div>
+
+              <!-- Slider Handle - 8-bit cursor style -->
+              <div class="slider-handle" id="slider-thumb" style={`
+                position: absolute;
+                top: 4px;
+                left: 8px;
+                width: 12px;
+                height: 12px;
+                background-color: var(--text-primary);
+                border: 2px solid var(--pixel-cyan);
+                transition: left 0.1s ease;
+                cursor: pointer;
+                z-index: 10;
+                box-shadow:
+                  0 0 0 1px var(--shadow),
+                  0 0 8px var(--pixel-cyan);
+                image-rendering: pixelated;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: crisp-edges;
+              `}>
+                <!-- Inner pixel detail -->
+                <div style={`
+                  position: absolute;
+                  top: 2px;
+                  left: 2px;
+                  width: 4px;
+                  height: 4px;
+                  background-color: var(--pixel-cyan);
+                `}></div>
+              </div>
+
+              <!-- Pixel markers -->
+              <div style="position: absolute; top: 16px; left: 0; width: 100px; display: flex; justify-content: space-between;">
+                <div style="width: 2px; height: 2px; background-color: var(--border-primary);"></div>
+                <div style="width: 2px; height: 2px; background-color: var(--border-primary);"></div>
+                <div style="width: 2px; height: 2px; background-color: var(--border-primary);"></div>
+                <div style="width: 2px; height: 2px; background-color: var(--border-primary);"></div>
+                <div style="width: 2px; height: 2px; background-color: var(--border-primary);"></div>
+              </div>
+            </div>
+
+            <!-- Hidden Input for Functionality -->
+            <input
+              type="range"
+              id="font-size-slider"
+              min="12"
+              max="24"
+              value="16"
+              class="hidden-slider"
+              style="position: absolute; opacity: 0; pointer-events: none;"
+            />
+          </div>
+          <span class="heading text-lg opacity-70" style={`color: var(--text-secondary); font-family: 'Doto', 'Sixtyfour', monospace;`}>
+            A
+          </span>
+        </div>
+
+        <!-- Simple Pixel Day/Night Toggle Button -->
+        <button
+          id="theme-toggle"
+          class="theme-toggle-button"
+          style={`
+            width: 40px;
+            height: 20px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            cursor: pointer;
+            padding: 0;
+            border-radius: 2px;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+          `}
+          onmouseover={`
+            this.style.backgroundColor = 'var(--bg-tertiary)';
+            this.style.transform = 'translateY(-1px)';
+          `}
+          onmouseout={`
+            this.style.backgroundColor = 'var(--bg-secondary)';
+            this.style.transform = 'translateY(0)';
+          `}
+            aria-label="Toggle theme"
+        >
+          <!-- Square indicator (changes color based on theme) -->
+          <div
+            id="theme-indicator"
+            class="theme-indicator"
+            style={`
+              width: 20px;
+              height: 20px;
+              background-color: var(--pixel-cyan, #00ffff);
+              transition: all 0.3s ease;
+              position: absolute;
+              top: 0;
+              left: 0;
+            `}
+          ></div>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Scanline Effect -->
+  <div class="scanline"></div>
+
+  <style>
+    .scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent,
+        var(--particle-color, #00ff00),
+        transparent
+      );
+      animation: scanline 3s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .particle-hover-effect {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .particle-hover-effect::before,
+    .particle-hover-effect::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: var(--particle-color, #00ff00);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .particle-hover-effect:hover::before,
+    .particle-hover-effect:hover::after {
+      opacity: 1;
+      animation: particleFloat 2s ease-in-out infinite;
+    }
+
+    .particle-hover-effect::before {
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .particle-hover-effect::after {
+      top: 60%;
+      right: 10%;
+      animation-delay: 0.5s;
+    }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+
+    /* Pixel Slider Styles */
+    .pixel-slider {
+      position: relative;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .pixel-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 8px;
+      height: 8px;
+      background: currentColor;
+      border: 2px solid currentColor;
+      cursor: pointer;
+      position: relative;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .pixel-slider::-moz-range-thumb {
+      width: 8px;
+      height: 8px;
+      background: currentColor;
+      border: 2px solid currentColor;
+      cursor: pointer;
+      position: relative;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .pixel-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 4px currentColor);
+    }
+
+    .pixel-slider::-moz-range-thumb:hover {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 4px currentColor);
+    }
+
+    /* Theme Toggle Button Hover Effect - No Border */
+    .theme-toggle-button:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 6px currentColor);
+      animation: pixelButtonGlow 0.3s ease-out;
+    }
+
+    .theme-toggle-button:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes pixelButtonGlow {
+      0% {
+        filter: drop-shadow(0 0 0 currentColor);
+      }
+      100% {
+        filter: drop-shadow(0 0 6px currentColor);
+      }
+    }
+
+    /* Pixel Icon Styles */
+    .theme-icon-container {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .theme-icon-container .pixel-block {
+      display: block !important;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      transition: opacity 0.2s ease;
+    }
+
+    /* Theme Toggle Animation */
+    .moon-icon,
+    .sun-icon {
+      transition: opacity 0.2s ease;
+    }
+
+    .moon-icon .pixel-block,
+    .sun-icon .pixel-block {
+      animation: pixelIconAppear 0.3s ease-out;
+    }
+
+    @keyframes pixelIconAppear {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Ensure icons are clearly visible in different themes */
+    [data-theme="light"] .theme-icon-container .pixel-block {
+      filter: brightness(1.2);
+    }
+
+    [data-theme="dark"] .theme-icon-container .pixel-block {
+      filter: brightness(1.0);
+    }
+
+    /* Pixel Switch Styles */
+    .pixel-switch-container {
+      transition: all 0.2s ease;
+    }
+
+    .pixel-switch-container:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 1px 2px rgba(0,0,0,0.3),
+        0 4px 0 rgba(255,255,255,0.1),
+        0 0 12px currentColor;
+    }
+
+    .pixel-switch-container:active {
+      transform: translateY(0);
+    }
+
+    .pixel-slider {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pixel-slider:hover {
+      transform: scale(1.05);
+      box-shadow:
+        inset 0 0.5px 1px rgba(0,0,0,0.3),
+        0 0 12px currentColor;
+    }
+
+    .pixel-icon-sun,
+    .pixel-icon-moon {
+      transition: all 0.3s ease;
+    }
+
+    /* Light Theme Styles */
+    [data-theme="light"] {
+      --bg-color: #f8f9fa;
+      --particle-color: var(--pixel-cyan);
+    }
+
+    [data-theme="light"] body {
+      background-color: var(--bg-color);
+      color: #000000;
+    }
+
+    [data-theme="light"] .pixel-border {
+      border-color: var(--particle-color);
+      box-shadow: 0 0 0 2px #fff, 0 0 10px var(--particle-color);
+    }
+  </style>
+
+  <script>
+    // Simple theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIndicator = document.getElementById('theme-indicator');
+
+    // Initialize indicator state
+    function initializeIndicator() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      updateIndicatorState(currentTheme);
+    }
+
+    // Update indicator visual state
+    function updateIndicatorState(theme) {
+      if (themeIndicator) {
+        if (theme === 'dark') {
+          // Dark mode: cyan indicator on the right
+          themeIndicator.style.backgroundColor = 'var(--pixel-cyan, #00ffff)';
+          themeIndicator.style.transform = 'translateX(20px)';
+          themeToggle.style.borderColor = 'var(--pixel-cyan, #00ffff)';
+        } else {
+          // Light mode: yellow indicator on the left
+          themeIndicator.style.backgroundColor = 'var(--pixel-yellow, #ffaa00)';
+          themeIndicator.style.transform = 'translateX(0px)';
+          themeToggle.style.borderColor = 'var(--pixel-yellow, #ffaa00)';
+        }
+      }
+    }
+
+    // Theme toggle click handler
+    themeToggle?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      // Update theme
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+
+      // Update indicator state
+      updateIndicatorState(newTheme);
+
+      // Dispatch event for other components
+      document.dispatchEvent(new CustomEvent('toggleTheme'));
+    });
+
+    // Initialize on load
+    initializeIndicator();
+
+    // Pixel Slider Interaction
+    const sliderInput = document.getElementById('font-size-slider');
+    const sliderFill = document.getElementById('slider-fill');
+    const sliderThumb = document.getElementById('slider-thumb');
+    const sliderTrack = document.querySelector('.pixel-slider-track');
+
+    function updateSliderVisuals(value) {
+      const min = 12;
+      const max = 24;
+      const progress = ((value - min) / (max - min)) * 100;
+
+      // Update fill width
+      sliderFill.style.setProperty('--progress', `${progress}%`);
+
+      // Calculate thumb position: 8px is the starting position, 84px is the max travel distance
+      const thumbPosition = 8 + (progress / 100) * 84;
+      sliderThumb.style.left = `${thumbPosition}px`;
+
+      console.log(`Retro slider updated: value=${value}, progress=${progress}%, thumbPosition=${thumbPosition}px`);
+    }
+
+    // Handle slider input change
+    sliderInput?.addEventListener('input', (e) => {
+      const value = e.target.value;
+      updateSliderVisuals(value);
+
+      // Update font size
+      document.documentElement.style.setProperty('--font-size-base', `${value}px`);
+      localStorage.setItem('fontSize', value);
+
+      document.dispatchEvent(new CustomEvent('fontSizeChange', {
+        detail: { size: parseInt(value) }
+      }));
+    });
+
+    // Handle click on retro slider container
+    const retroSliderContainer = document.querySelector('.retro-slider-container');
+    retroSliderContainer?.addEventListener('click', (e) => {
+      if (e.target === sliderFill || e.target === sliderThumb) return;
+
+      const rect = retroSliderContainer.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+
+      // Map click position to slider range (8px to 92px for thumb center)
+      const sliderStart = 8;
+      const sliderEnd = 92;
+      const sliderRange = sliderEnd - sliderStart;
+      const clickPosition = Math.max(sliderStart, Math.min(sliderEnd, clickX));
+      const percentage = (clickPosition - sliderStart) / sliderRange;
+
+      const min = 12;
+      const max = 24;
+      const value = Math.round(min + percentage * (max - min));
+      const clampedValue = Math.max(min, Math.min(max, value));
+
+      sliderInput.value = clampedValue;
+      updateSliderVisuals(clampedValue);
+
+      // Update font size
+      document.documentElement.style.setProperty('--font-size-base', `${clampedValue}px`);
+      localStorage.setItem('fontSize', clampedValue);
+
+      document.dispatchEvent(new CustomEvent('fontSizeChange', {
+        detail: { size: parseInt(clampedValue) }
+      }));
+    });
+
+    // Handle thumb dragging
+    let isSliderDragging = false;
+
+    sliderThumb?.addEventListener('mousedown', (e) => {
+      isSliderDragging = true;
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isSliderDragging || !retroSliderContainer) return;
+
+      const rect = retroSliderContainer.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+
+      // Map drag position to slider range (8px to 92px for thumb center)
+      const sliderStart = 8;
+      const sliderEnd = 92;
+      const sliderRange = sliderEnd - sliderStart;
+      const dragPosition = Math.max(sliderStart, Math.min(sliderEnd, clickX));
+      const percentage = (dragPosition - sliderStart) / sliderRange;
+
+      const min = 12;
+      const max = 24;
+      const value = Math.round(min + percentage * (max - min));
+      const clampedValue = Math.max(min, Math.min(max, value));
+
+      sliderInput.value = clampedValue;
+      updateSliderVisuals(clampedValue);
+
+      // Update font size
+      document.documentElement.style.setProperty('--font-size-base', `${clampedValue}px`);
+      localStorage.setItem('fontSize', clampedValue);
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isSliderDragging && sliderInput) {
+        localStorage.setItem('fontSize', sliderInput.value);
+        document.dispatchEvent(new CustomEvent('fontSizeChange', {
+          detail: { size: parseInt(sliderInput.value) }
+        }));
+      }
+      isSliderDragging = false;
+    });
+
+    // Initialize slider with saved value
+    const savedFontSize = localStorage.getItem('fontSize') || '16';
+    sliderInput.value = savedFontSize;
+    updateSliderVisuals(savedFontSize);
+    document.documentElement.style.setProperty('--font-size-base', `${savedFontSize}px`);
+
+    // Navigation item particle effects
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('mouseenter', (e) => {
+        createParticles(e.target);
+      });
+    });
+
+    function createParticles(element) {
+      const rect = element.getBoundingClientRect();
+      const particleCount = 5;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'nav-particle';
+        particle.style.cssText = `
+          position: absolute;
+          width: 2px;
+          height: 2px;
+          background-color: var(--particle-color, #00ff00);
+          left: ${rect.left + rect.width / 2}px;
+          top: ${rect.top + rect.height / 2}px;
+          pointer-events: none;
+          z-index: 100;
+          animation: navParticleFloat 1s ease-out forwards;
+        `;
+
+        // Set random movement direction
+        const angle = (Math.PI * 2 * i) / particleCount;
+        const velocity = 50 + Math.random() * 50;
+        particle.style.setProperty('--tx', `${Math.cos(angle) * velocity}px`);
+        particle.style.setProperty('--ty', `${Math.sin(angle) * velocity}px`);
+
+        document.body.appendChild(particle);
+
+        // Remove particle after animation ends
+        setTimeout(() => particle.remove(), 1000);
+      }
+    }
+
+    // Add navigation particle animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes navParticleFloat {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--tx), var(--ty)) scale(0);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</header>

@@ -1,0 +1,178 @@
+---
+import Icon from './Icon.astro';
+import { getSiteConfig } from '../../config/site';
+
+// Get site configuration
+const siteConfig = getSiteConfig();
+const kofiLink = siteConfig.kofiLink;
+
+const showButton = !!kofiLink;
+---
+
+{showButton && (
+  <a
+    href={kofiLink}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="kofi-floating-button"
+    title="Buy me a coffee on Ko-Fi"
+    aria-label="Buy me a coffee on Ko-Fi"
+  >
+    <div class="kofi-container">
+      <Icon name="kofi" size={24} color="#ffffff" />
+      <span class="kofi-text">DONATE</span>
+    </div>
+  </a>
+)}
+
+<style>
+  .kofi-floating-button {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    z-index: 1000;
+
+    /* Pixel style button */
+    background-color: #ff5f5f;
+    border: 3px solid #ffffff;
+    box-shadow:
+      0 0 0 3px #ff5f5f,
+      0 4px 0 #000000,
+      0 6px 12px rgba(0, 0, 0, 0.4);
+
+    /* Hover effects */
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    /* Size and layout */
+    padding: 12px 16px;
+    border-radius: 0;
+    text-decoration: none;
+
+    /* Pixel perfect rendering */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  .kofi-floating-button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 0 0 3px #ff5f5f,
+      0 6px 0 #000000,
+      0 8px 16px rgba(0, 0, 0, 0.5);
+    background-color: #ff4f4f;
+  }
+
+  .kofi-floating-button:active {
+    transform: translateY(0);
+    box-shadow:
+      0 0 0 3px #ff5f5f,
+      0 2px 0 #000000,
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .kofi-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    /* Animation for attention */
+    animation: kofi-bounce 2s ease-in-out infinite;
+  }
+
+  .kofi-text {
+    font-family: 'Doto', 'Sixtyfour', 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 14px;
+    color: #ffffff;
+    text-shadow:
+      2px 2px 0 #000000,
+      0 0 4px rgba(255, 95, 95, 0.5);
+    white-space: nowrap;
+  }
+
+  /* Bounce animation to attract attention */
+  @keyframes kofi-bounce {
+    0%, 90%, 100% {
+      transform: translateY(0);
+    }
+    95% {
+      transform: translateY(-3px);
+    }
+  }
+
+  /* Pulse animation for the button */
+  @keyframes kofi-pulse {
+    0% {
+      box-shadow:
+        0 0 0 3px #ff5f5f,
+        0 4px 0 #000000,
+        0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+      box-shadow:
+        0 0 0 3px #ff5f5f,
+        0 4px 0 #000000,
+        0 6px 20px rgba(255, 95, 95, 0.3);
+    }
+    100% {
+      box-shadow:
+        0 0 0 3px #ff5f5f,
+        0 4px 0 #000000,
+        0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  /* Add pulse effect on hover */
+  .kofi-floating-button:hover {
+    animation: kofi-pulse 1.5s ease-in-out infinite;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .kofi-floating-button {
+      padding: 10px 14px;
+    }
+
+    .kofi-text {
+      font-size: 12px;
+    }
+  }
+
+  /* Dark mode specific styles */
+  @media (prefers-color-scheme: dark) {
+    .kofi-floating-button {
+      border-color: #ffffff;
+    }
+  }
+
+  /* Ensure it's above other content */
+  .kofi-floating-button {
+    position: fixed !important;
+    z-index: 9999 !important;
+  }
+
+  /* Remove default focus styles and add custom ones */
+  .kofi-floating-button:focus {
+    outline: 2px dashed #ffffff;
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Add some interactivity when the button is clicked
+  document.addEventListener('DOMContentLoaded', () => {
+    const kofiButton = document.querySelector('.kofi-floating-button');
+    if (kofiButton) {
+      // Add a subtle shake animation on click
+      kofiButton.addEventListener('mousedown', () => {
+        kofiButton.style.animation = 'none';
+        setTimeout(() => {
+          kofiButton.style.animation = '';
+        }, 10);
+      });
+    }
+  });
+</script>

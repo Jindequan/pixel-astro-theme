@@ -1,0 +1,38 @@
+{
+  "name": "pixel-astro-theme",
+  "version": "1.0.0",
+  "description": "A retro pixel-themed Astro blog with true pixel fonts and particle effects",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "keywords": [
+    "astro",
+    "astro-theme",
+    "pixel",
+    "pixel-art",
+    "retro",
+    "blog",
+    "typescript"
+  ],
+  "author": "Liu Zan",
+  "license": "MIT",
+  "dependencies": {
+    "@astrojs/mdx": "^3.1.9",
+    "@astrojs/sitemap": "^3.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "aplayer": "^1.10.1",
+    "astro": "^4.0.0",
+    "shiki": "^3.14.0",
+    "tailwindcss": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

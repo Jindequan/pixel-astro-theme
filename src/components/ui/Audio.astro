@@ -1,0 +1,416 @@
+---
+export interface Props {
+  src: string;
+  title?: string;
+  artist?: string;
+  cover?: string;
+  className?: string;
+}
+
+const { src, title = "Audio Track", artist, cover, className = "" } = Astro.props;
+const audioId = `audio-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<!-- APlayer Audio Component -->
+<div class={`audio-player pixel-card ${className}`}>
+  <!-- Cover Art -->
+  {cover && (
+    <div class="audio-cover">
+      <img
+        src={cover}
+        alt={`${title} cover art`}
+        class="w-full h-32 object-cover border-b-2 border-current"
+        loading="lazy"
+      />
+    </div>
+  )}
+
+  <!-- Audio Info -->
+  <div class="audio-info p-4">
+    <h3 class="pixel-title text-lg font-bold mb-2">
+      {title}
+    </h3>
+    {artist && (
+      <p class="pixel-text text-sm opacity-80 mb-4">
+        {artist}
+      </p>
+    )}
+  </div>
+
+  <!-- APlayer Container -->
+  <div class="audio-controls p-4 pt-0">
+    <div id={audioId} class="aplayer-container" data-src={src} data-title={title} data-artist={artist || ''} data-cover={cover || ''}></div>
+  </div>
+
+  <!-- Audio Badge -->
+  <div class="absolute top-2 right-2">
+    <span class="pixel-tag text-xs opacity-80">
+      AUDIO
+    </span>
+  </div>
+</div>
+
+<!-- APlayer Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" />
+
+<style>
+  .audio-player {
+    position: relative;
+    max-width: 400px;
+    background: var(--card-bg, rgba(10, 10, 10, 0.9));
+    border: 3px solid currentColor;
+  }
+
+  .audio-cover img {
+    border-bottom: 2px solid currentColor;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  /* APlayer Custom Styling for Pixel Theme */
+  .aplayer-container {
+    background: var(--card-bg, rgba(20, 20, 20, 0.9));
+    border: 2px solid currentColor;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* Override APlayer styles for dark mode */
+  .aplayer {
+    background: var(--card-bg, rgba(20, 20, 20, 0.9)) !important;
+    font-family: 'Doto', 'Sixtyfour', monospace !important;
+  }
+
+  .aplayer-pic {
+    background: currentColor !important;
+    border: 2px solid rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .aplayer-info {
+    border-left: 1px solid currentColor !important;
+  }
+
+  .aplayer-title {
+    color: #ffffff !important;
+    font-family: 'Sixtyfour', monospace !important;
+    font-size: 14px !important;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.8) !important;
+  }
+
+  .aplayer-author {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-family: 'Doto', monospace !important;
+    font-size: 12px !important;
+  }
+
+  .aplayer-controller {
+    background: var(--card-bg, rgba(30, 30, 30, 0.9)) !important;
+    border-top: 1px solid currentColor !important;
+  }
+
+  .aplayer .aplayer-icon {
+    background: currentColor !important;
+    border: 1px solid rgba(0, 0, 0, 0.5) !important;
+    border-radius: 4px !important;
+  }
+
+  .aplayer .aplayer-icon path {
+    fill: #000000 !important;
+  }
+
+  .aplayer-bar-wrap {
+    margin: 0 8px !important;
+  }
+
+  .aplayer-bar {
+    background: rgba(255, 255, 255, 0.2) !important;
+    height: 6px !important;
+    border-radius: 3px !important;
+  }
+
+  .aplayer-played {
+    background: currentColor !important;
+    height: 6px !important;
+    border-radius: 3px !important;
+  }
+
+  .aplayer-loaded {
+    background: rgba(255, 255, 255, 0.3) !important;
+    height: 6px !important;
+    border-radius: 3px !important;
+  }
+
+  .aplayer-time {
+    color: #ffffff !important;
+    font-family: 'Sixtyfour', monospace !important;
+    font-size: 11px !important;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.8) !important;
+  }
+
+  .aplayer-volume {
+    background: var(--card-bg, rgba(30, 30, 30, 0.9)) !important;
+    border: 1px solid currentColor !important;
+    border-radius: 4px !important;
+  }
+
+  .aplayer-volume-bar {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 2px !important;
+  }
+
+  .aplayer-volume-bar-value {
+    background: currentColor !important;
+    border-radius: 2px !important;
+  }
+
+  /* Hover effects */
+  .audio-player:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px currentColor;
+    transition: all 0.2s ease;
+  }
+
+  /* Audio animation indicator */
+  .audio-player.playing::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      currentColor 50%,
+      transparent 100%);
+    opacity: 0.8;
+    animation: audioWave 2s linear infinite;
+  }
+
+  @keyframes audioWave {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Reduce text shadow for audio component text */
+  .audio-info h3,
+  .audio-info p {
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3) !important;
+  }
+
+  /* Simple HTML5 Audio Player Fallback */
+  .simple-audio-player {
+    background: var(--card-bg, rgba(20, 20, 20, 0.9));
+    border: 2px solid currentColor;
+    border-radius: 4px;
+    padding: 12px;
+  }
+
+  .simple-audio-player audio {
+    background: var(--card-bg, rgba(30, 30, 30, 0.9));
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    outline: none;
+    margin-bottom: 8px;
+  }
+
+  .simple-audio-player audio::-webkit-media-controls-panel {
+    background-color: var(--card-bg, rgba(30, 30, 30, 0.95)) !important;
+    border: 1px solid currentColor !important;
+    border-radius: 4px !important;
+  }
+
+  .simple-audio-player audio::-webkit-media-controls-play-button,
+  .simple-audio-player audio::-webkit-media-controls-pause-button {
+    background-color: currentColor !important;
+    border-radius: 4px !important;
+    color: #000000 !important;
+  }
+
+  .simple-audio-player audio::-webkit-media-controls-timeline {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 2px !important;
+    height: 6px !important;
+  }
+
+  .simple-audio-player audio::-webkit-media-controls-timeline-progress {
+    background-color: currentColor !important;
+    border-radius: 2px !important;
+  }
+
+  .simple-audio-player audio::-webkit-media-controls-current-time-display,
+  .simple-audio-player audio::-webkit-media-controls-time-remaining-display {
+    color: #ffffff !important;
+    font-family: 'Sixtyfour', monospace !important;
+    font-size: 11px !important;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.8) !important;
+  }
+
+  .audio-info-display {
+    padding: 8px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .audio-title-display {
+    font-family: 'Sixtyfour', monospace;
+    font-size: 12px;
+    color: #ffffff;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.8);
+    margin-bottom: 2px;
+  }
+
+  .audio-artist-display {
+    font-family: 'Doto', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.6);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .audio-player {
+      max-width: 100%;
+    }
+
+    .aplayer {
+      font-size: 12px !important;
+    }
+
+    .aplayer-title {
+      font-size: 12px !important;
+    }
+
+    .aplayer-author {
+      font-size: 10px !important;
+    }
+
+    .simple-audio-player {
+      padding: 8px;
+    }
+
+    .audio-title-display {
+      font-size: 11px;
+    }
+
+    .audio-artist-display {
+      font-size: 9px;
+    }
+  }
+</style>
+
+<script>
+  // Simple audio player fallback
+  document.addEventListener('DOMContentLoaded', () => {
+    // Try to load APlayer first
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js';
+    script.onload = () => {
+      console.log('APlayer loaded successfully');
+      initAPlayers();
+    };
+    script.onerror = () => {
+      console.error('Failed to load APlayer, falling back to HTML5 audio');
+      initHTML5Audio();
+    };
+    document.head.appendChild(script);
+  });
+
+  function initAPlayers() {
+    const audioContainers = document.querySelectorAll('.aplayer-container');
+
+    audioContainers.forEach((container) => {
+      const audioPlayer = container.closest('.audio-player');
+      const audioSrc = container.dataset.src;
+      const audioTitle = container.dataset.title || 'Audio Track';
+      const audioArtist = container.dataset.artist || '';
+      const audioCover = container.dataset.cover || '';
+
+      if (audioSrc && typeof APlayer !== 'undefined') {
+        try {
+          const ap = new APlayer({
+            container: container,
+            mini: false,
+            autoplay: false,
+            theme: getComputedStyle(document.documentElement)
+              .getPropertyValue('--particle-color').trim() || '#00ff00',
+            loop: false,
+            order: 'list',
+            preload: 'metadata',
+            volume: 0.7,
+            mutex: true,
+            listFolded: false,
+            listMaxHeight: 0,
+            lrcType: 0,
+            audio: {
+              name: audioTitle,
+              artist: audioArtist,
+              url: audioSrc,
+              cover: audioCover
+            }
+          });
+
+          // Add playing class for animation
+          ap.on('play', () => {
+            audioPlayer.classList.add('playing');
+          });
+
+          ap.on('pause', () => {
+            audioPlayer.classList.remove('playing');
+          });
+
+          ap.on('ended', () => {
+            audioPlayer.classList.remove('playing');
+          });
+
+          console.log('APlayer initialized for:', audioTitle);
+        } catch (error) {
+          console.error('Error initializing APlayer:', error);
+          initHTML5Audio();
+        }
+      }
+    });
+  }
+
+  function initHTML5Audio() {
+    // Fallback to simple HTML5 audio
+    const audioContainers = document.querySelectorAll('.aplayer-container');
+
+    audioContainers.forEach((container) => {
+      const audioPlayer = container.closest('.audio-player');
+      const audioSrc = container.dataset.src;
+      const audioTitle = container.dataset.title || 'Audio Track';
+      const audioArtist = container.dataset.artist || '';
+
+      if (audioSrc) {
+        container.innerHTML = `
+          <div class="simple-audio-player">
+            <audio controls class="w-full" preload="metadata">
+              <source src="${audioSrc}" type="audio/mpeg">
+              <source src="${audioSrc}" type="audio/wav">
+              <source src="${audioSrc}" type="audio/ogg">
+              Your browser does not support the audio element.
+            </audio>
+            <div class="audio-info-display">
+              <div class="audio-title-display">${audioTitle}</div>
+              ${audioArtist ? `<div class="audio-artist-display">${audioArtist}</div>` : ''}
+            </div>
+          </div>
+        `;
+
+        // Add playing animation
+        const audio = container.querySelector('audio');
+        if (audio) {
+          audio.addEventListener('play', () => {
+            audioPlayer.classList.add('playing');
+          });
+          audio.addEventListener('pause', () => {
+            audioPlayer.classList.remove('playing');
+          });
+          audio.addEventListener('ended', () => {
+            audioPlayer.classList.remove('playing');
+          });
+        }
+      }
+    });
+  }
+</script>

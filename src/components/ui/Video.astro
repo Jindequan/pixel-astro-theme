@@ -1,0 +1,158 @@
+---
+export interface Props {
+  url: string;
+  title?: string;
+  aspectRatio?: string;
+  className?: string;
+}
+
+const { url, title = "Video", aspectRatio = "16/9", className = "" } = Astro.props;
+
+// Parse video URL and determine platform
+function parseVideoUrl(videoUrl: string) {
+  const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
+  const bilibiliRegex = /(?:bilibili\.com\/video\/)([^&\n?#]+)/;
+
+  const youtubeMatch = videoUrl.match(youtubeRegex);
+  const bilibiliMatch = videoUrl.match(bilibiliRegex);
+
+  if (youtubeMatch && youtubeMatch[1]) {
+    return {
+      platform: 'youtube',
+      id: youtubeMatch[1],
+      embedUrl: `https://www.youtube.com/embed/${youtubeMatch[1]}`
+    };
+  }
+
+  if (bilibiliMatch && bilibiliMatch[1]) {
+    return {
+      platform: 'bilibili',
+      id: bilibiliMatch[1],
+      embedUrl: `https://player.bilibili.com/player.html?bvid=${bilibiliMatch[1]}&autoplay=false`
+    };
+  }
+
+  // Fallback for direct video URLs
+  return {
+    platform: 'direct',
+    id: '',
+    embedUrl: videoUrl
+  };
+}
+
+const videoInfo = parseVideoUrl(url);
+---
+
+<!-- Video Container with Pixel Styling -->
+<div class={`video-container pixel-card ${className}`} style={`aspect-ratio: ${aspectRatio};`}>
+  <div class="relative w-full h-full overflow-hidden rounded-lg">
+
+    {videoInfo.platform === 'youtube' && (
+      <iframe
+        src={`${videoInfo.embedUrl}?rel=0&modestbranding=1&autohide=1&showinfo=0&autoplay=0`}
+        title={title}
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        class="w-full h-full"
+        loading="lazy"
+      ></iframe>
+    )}
+
+    {videoInfo.platform === 'bilibili' && (
+      <iframe
+        src={videoInfo.embedUrl}
+        title={title}
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        class="w-full h-full"
+        loading="lazy"
+      ></iframe>
+    )}
+
+    {videoInfo.platform === 'direct' && (
+      <video
+        controls
+        class="w-full h-full"
+        title={title}
+        preload="metadata"
+      >
+        <source src={url} type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    )}
+
+  </div>
+
+  <!-- Video Platform Badge -->
+  <div class="absolute top-2 left-2">
+    <span class="pixel-tag text-xs opacity-80">
+      {videoInfo.platform.toUpperCase()}
+    </span>
+  </div>
+</div>
+
+<style>
+  .video-container {
+    position: relative;
+    background: var(--card-bg, rgba(10, 10, 10, 0.9));
+    border: 3px solid currentColor;
+    overflow: hidden;
+  }
+
+  .video-container iframe,
+  .video-container video {
+    border: none;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    filter: contrast(1.1) brightness(1.1);
+  }
+
+  /* Custom video controls styling */
+  .video-container video::-webkit-media-controls-panel {
+    background-color: rgba(20, 20, 20, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 4px !important;
+    filter: brightness(1.2) contrast(1.1) !important;
+  }
+
+  .video-container video::-webkit-media-controls-play-button,
+  .video-container video::-webkit-media-controls-pause-button,
+  .video-container video::-webkit-media-controls-mute-button,
+  .video-container video::-webkit-media-controls-volume-slider,
+  .video-container video::-webkit-media-controls-timeline {
+    filter: brightness(1.3) contrast(1.2) !important;
+  }
+
+  .video-container video::-webkit-media-controls-timeline {
+    background: rgba(255, 255, 255, 0.2) !important;
+    height: 4px !important;
+    border-radius: 2px !important;
+  }
+
+  .video-container video::-webkit-media-controls-timeline-progress {
+    background-color: currentColor !important;
+    filter: brightness(1.4) !important;
+  }
+
+  .video-container video::-webkit-media-controls-current-time-display,
+  .video-container video::-webkit-media-controls-time-remaining-display {
+    color: #ffffff !important;
+    filter: brightness(1.2) contrast(1.2) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* Ensure aspect ratio works */
+  .video-container {
+    aspect-ratio: var(--aspect-ratio, 16/9);
+  }
+
+  /* Hover effects */
+  .video-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px currentColor;
+    transition: all 0.2s ease;
+  }
+</style>

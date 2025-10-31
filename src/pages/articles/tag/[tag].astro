@@ -1,0 +1,395 @@
+---
+import BaseLayout from '../../../components/layout/BaseLayout.astro';
+import Header from '../../../components/ui/Header.astro';
+import Card from '../../../components/ui/Card.astro';
+import Icon from '../../../components/ui/Icon.astro';
+import { getCollection } from 'astro:content';
+import { getSiteConfig } from '../../../config/site';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+
+  // Filter out draft posts
+  const publishedPosts = allPosts.filter(post => !post.data.draft);
+
+  // Get all unique tags from all posts
+  const allTags = new Set<string>();
+  publishedPosts.forEach(post => {
+    post.data.tags.forEach(tag => allTags.add(tag));
+  });
+
+  // Create paths for each tag
+  const paths = Array.from(allTags).map(tag => {
+    // Filter posts by tag
+    const tagPosts = publishedPosts.filter(post =>
+      post.data.tags.includes(tag)
+    );
+
+    // Sort by publish date (newest first)
+    const sortedTagPosts = tagPosts.sort((a, b) =>
+      new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime()
+    );
+
+    // Calculate pagination (12 posts per page for tag pages)
+    const postsPerPage = 12;
+    const totalPages = Math.ceil(sortedTagPosts.length / postsPerPage);
+
+    const pagePaths = [];
+
+    for (let page = 1; page <= totalPages; page++) {
+      const startIndex = (page - 1) * postsPerPage;
+      const endIndex = startIndex + postsPerPage;
+      const paginatedPosts = sortedTagPosts.slice(startIndex, endIndex);
+
+      pagePaths.push({
+        params: {
+          tag: tag.toLowerCase(),
+          page: page.toString()
+        },
+        props: {
+          posts: paginatedPosts,
+          tag: tag,
+          currentPage: page,
+          totalPages: totalPages,
+          totalPosts: sortedTagPosts.length,
+          allTags: Array.from(allTags).sort()
+        }
+      });
+    }
+
+    return pagePaths;
+  }).flat();
+
+  return paths;
+}
+
+const { posts, tag, currentPage, totalPages, totalPosts, allTags } = Astro.props;
+
+// Get site configuration
+const siteConfig = getSiteConfig();
+const baseUrl = '/articles';
+
+// Prepare article data for search functionality
+const allPostsForSearch = await getCollection('blog');
+const publishedPostsForSearch = allPostsForSearch.filter(post => !post.data.draft);
+const articlesData = JSON.stringify(publishedPostsForSearch.map(post => ({
+  title: post.data.title,
+  description: post.data.description,
+  tags: post.data.tags,
+  slug: post.slug,
+  publishDate: post.data.publishDate
+})));
+
+// Get related articles (excluding current tag posts)
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts.filter(post => !post.data.draft);
+const allOtherPosts = publishedPosts.filter(post =>
+  !post.data.tags.includes(tag)
+);
+const relatedPosts = allOtherPosts
+  .slice(0, 3)
+  .map(p => ({
+    slug: p.slug,
+    title: p.data.title,
+    description: p.data.description,
+    color: p.data.color,
+    tags: p.data.tags,
+    publishDate: p.data.publishDate
+  }));
+---
+
+<BaseLayout
+  title={`${tag.toUpperCase()} Articles - ${siteConfig.siteName}`}
+  description={`${totalPosts} articles tagged with ${tag} on pixel art, gaming, and web development`}
+  particleColor={siteConfig.themeColors.accent}
+>
+  <Header />
+
+  <main class="pixel-container max-w-6xl mx-auto py-16">
+    <!-- Hero Section -->
+    <section class="text-center py-16">
+      <div class="mb-8">
+        <h1 class="text-4xl font-bold mb-4" style={`color: ${siteConfig.themeColors.accent}; font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.5);`}>
+          🏷️ {tag.toUpperCase()}
+        </h1>
+      </div>
+
+      <p class="text-xl mb-8 opacity-80 max-w-2xl mx-auto pixel-text pixel-normal">
+        {totalPosts} articles about {tag.toLowerCase()}
+      </p>
+    </section>
+
+    <!-- Tag Statistics -->
+    <section class="py-8">
+      <div class="text-center pixel-card">
+        <div class="grid grid-cols-3 gap-8 py-4">
+          <div>
+            <h3 class="pixel-title-accent text-2xl font-bold mb-2">
+              {totalPosts}
+            </h3>
+            <p class="pixel-text opacity-80">
+              ARTICLES
+            </p>
+          </div>
+          <div>
+            <h3 class="pixel-title-green text-2xl font-bold mb-2">
+              {posts.filter(post => post.data.featured).length}
+            </h3>
+            <p class="pixel-text opacity-80">
+              FEATURED
+            </p>
+          </div>
+          <div>
+            <h3 class="pixel-title-cyan text-2xl font-bold mb-2">
+              {Math.round(totalPosts / totalPages)}
+            </h3>
+            <p class="pixel-text opacity-80">
+              PER PAGE
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  
+    <!-- Tag Articles -->
+    <section class="py-12">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold mb-4" style={`color: ${siteConfig.themeColors.accent}; font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.5);`}>
+          ALL {tag.toUpperCase()} ARTICLES
+        </h2>
+        <p class="pixel-text opacity-80">
+          Page {currentPage} of {totalPages} • {posts.length} articles showing
+        </p>
+      </div>
+
+      {posts.length > 0 ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <Card
+              key={post.slug}
+              title={post.data.title}
+              description={post.data.description}
+              href={`/articles/${post.slug}/`}
+              glowColor={post.data.color}
+              className="pixel-card hover:scale-105 transition-transform duration-300"
+            >
+              <div class="mb-4">
+                <p class="pixel-text pixel-normal text-sm opacity-60 mb-2">
+                  {new Date(post.data.publishDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+                {post.data.updateDate && (
+                  <p class="pixel-text pixel-normal text-xs opacity-50 mb-2">
+                    Updated: {new Date(post.data.updateDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                )}
+                <div class="flex flex-wrap gap-1">
+                  {post.data.tags.map((postTag) => (
+                    <span
+                      key={postTag}
+                      class={`pixel-tag text-xs ${postTag === tag.toLowerCase() ? 'ring-2 ring-offset-2' : ''}`}
+                      style={`
+                        background: ${postTag === tag.toLowerCase() ? siteConfig.themeColors.accent + '20' : 'transparent'};
+                        color: ${postTag === tag.toLowerCase() ? siteConfig.themeColors.accent : siteConfig.themeColors.primary};
+                        border: 1px solid ${postTag === tag.toLowerCase() ? siteConfig.themeColors.accent : siteConfig.themeColors.primary};
+                      `}
+                    >
+                      {postTag.toUpperCase()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <div class="pixel-card max-w-md mx-auto p-8">
+            <div class="mb-6">
+              <Icon name="tag" size={48} class="mx-auto opacity-50" style={`color: ${siteConfig.themeColors.accent};`} />
+            </div>
+            <h3 class="text-2xl font-bold mb-4" style={`color: ${siteConfig.themeColors.accent}; font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.5);`}>
+              NO ARTICLES FOUND
+            </h3>
+            <p class="pixel-text opacity-80 mb-6">
+              There are currently no articles tagged with <strong>{tag.toUpperCase()}</strong>.
+            </p>
+            <p class="pixel-text opacity-60 text-sm mb-8">
+              Try browsing other tags or check back later for new content.
+            </p>
+            <a
+              href="/articles"
+              class="inline-block px-6 py-3 border-2 font-bold hover:bg-white hover:text-black transition-colors"
+              style={`border-color: ${siteConfig.themeColors.secondary}; color: ${siteConfig.themeColors.secondary};`}
+            >
+              BROWSE ALL ARTICLES
+            </a>
+          </div>
+        </div>
+      )}
+    </section>
+
+    <!-- Pagination -->
+    {totalPages > 1 && (
+      <section class="py-12">
+        <div class="flex justify-center items-center gap-4">
+          <!-- Previous Button -->
+          {currentPage > 1 && (
+            <a
+              href={currentPage === 2 ? `/articles/tag/${tag.toLowerCase()}` : `/articles/tag/${tag.toLowerCase()}/page/${currentPage - 1}`}
+              class="inline-block px-6 py-3 border-2 font-bold hover:bg-white hover:text-black transition-colors"
+              style={`border-color: ${siteConfig.themeColors.secondary}; color: ${siteConfig.themeColors.secondary};`}
+            >
+              ← PREVIOUS
+            </a>
+          )}
+
+          <!-- Page Info -->
+          <span class="pixel-text opacity-80">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <!-- Next Button -->
+          {currentPage < totalPages && (
+            <a
+              href={`/articles/tag/${tag.toLowerCase()}/page/${currentPage + 1}`}
+              class="inline-block px-6 py-3 border-2 font-bold hover:bg-white hover:text-black transition-colors"
+              style={`border-color: ${siteConfig.themeColors.secondary}; color: ${siteConfig.themeColors.secondary};`}
+            >
+              NEXT →
+            </a>
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- Related Articles -->
+    {relatedPosts.length > 0 && (
+      <section class="py-12">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold mb-4" style={`color: ${siteConfig.themeColors.primary}; font-family: 'Doto', 'Sixtyfour', monospace; text-shadow: 2px 2px 0 rgba(0,0,0,0.5);`}>
+            🔗 RELATED ARTICLES
+          </h2>
+          <p class="pixel-text opacity-80">
+            Discover more content related to {tag.toLowerCase()}
+          </p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-3">
+          {relatedPosts.map((post) => (
+            <Card
+              key={post.slug}
+              title={post.title}
+              description={post.description}
+              href={`/articles/${post.slug}/`}
+              glowColor={post.color}
+              className="pixel-card hover:scale-105 transition-transform duration-300"
+            >
+              <div class="mb-4">
+                <p class="pixel-text pixel-normal text-sm opacity-60 mb-2">
+                  {new Date(post.publishDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+                <div class="flex flex-wrap gap-1">
+                  {post.tags.slice(0, 3).map((relatedTag) => (
+                    <span
+                      key={relatedTag}
+                      class="pixel-tag text-xs"
+                      style={`background: ${post.color}20; color: ${post.color}; border: 1px solid ${post.color};`}
+                    >
+                      {relatedTag.toUpperCase()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Back to All Articles -->
+    <section class="py-12">
+      <div class="text-center">
+        <a
+          href="/articles"
+          class="inline-block px-8 py-4 border-2 font-bold text-lg hover:bg-white hover:text-black transition-colors"
+          style={`border-color: ${siteConfig.themeColors.secondary}; color: ${siteConfig.themeColors.secondary};`}
+        >
+          ← BACK TO ALL ARTICLES
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  /* Responsive grid adjustments */
+  @media (max-width: 768px) {
+    .grid-cols-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid-cols-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Highlight current tag */
+  .ring-2.ring-offset-2 {
+    animation: pixel-pulse 2s infinite;
+  }
+
+  @keyframes pixel-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  /* Smooth transitions */
+  .pixel-card {
+    transition: all 0.3s ease;
+  }
+
+  /* Tag hover effects */
+  .pixel-tag {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .pixel-tag:hover {
+    transform: scale(1.05);
+  }
+
+  /* Mobile typography adjustments */
+  @media (max-width: 640px) {
+    .text-4xl {
+      font-size: 2rem;
+    }
+
+    .text-3xl {
+      font-size: 1.75rem;
+    }
+  }
+</style>
+
+<!-- Hidden article data for search functionality -->
+<script id="articles-data" type="application/json">
+{articlesData}
+</script>

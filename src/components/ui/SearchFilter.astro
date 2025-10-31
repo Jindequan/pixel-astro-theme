@@ -1,0 +1,737 @@
+---
+import Icon from './Icon.astro';
+
+export interface Props {
+  allTags: string[];
+  selectedTag?: string;
+  searchQuery?: string;
+  baseUrl: string;
+}
+
+const { allTags, selectedTag, searchQuery, baseUrl } = Astro.props;
+
+// Ensure allTags is an array
+const tagsArray = Array.isArray(allTags) ? allTags : [];
+
+// Tag icon mapping
+const tagIcons = {
+  'pixel-art': 'star',
+  'tutorial': 'book',
+  'web-development': 'code',
+  'design': 'heart',
+  'seo': 'search',
+  'optimization': 'settings',
+  'responsive': 'filter',
+  'mobile': 'externalLink',
+  'css': 'code',
+  'accessibility': 'heart',
+  'marketing': 'externalLink',
+  'visibility': 'search',
+  'technical-seo': 'settings',
+  'default': 'tag'
+};
+---
+
+<div class="search-filter-container compact">
+  <!-- Search Bar -->
+  <div class="search-section compact">
+    <div class="search-bar compact">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search..."
+        value={searchQuery || ''}
+        class="search-input compact pixel-text pixel-normal"
+        autocomplete="off"
+      />
+      <button class="search-button compact" aria-label="Search">
+        <Icon name="search" size={16} class="search-icon" />
+      </button>
+    </div>
+    <div id="search-results" class="search-results compact hidden">
+      <div class="search-results-header">
+        <h3 class="pixel-title-accent text-sm">Results</h3>
+        <button id="clear-search" class="clear-search pixel-text opacity-60">
+          <Icon name="close" size={12} />
+        </button>
+      </div>
+      <div id="search-results-list" class="search-results-list">
+        <!-- Results will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Tag Filter -->
+  <div class="filter-section compact">
+    <h3 class="filter-title compact pixel-title-cyan">
+      <Icon name="filter" size={14} class="inline-icon" />
+      TAGS
+    </h3>
+    <div class="tag-filter-container compact">
+      <!-- All Posts Option -->
+      <a
+        href={baseUrl}
+        class={`tag-filter-item compact ${!selectedTag ? 'active' : ''}`}
+        data-tag="all"
+      >
+        <Icon name="book" size={14} class="tag-icon" />
+        <span class="tag-name">ALL</span>
+      </a>
+
+      <!-- Individual Tags -->
+      {tagsArray.slice(0, 8).map((tag) => (
+        <a
+          href={`${baseUrl}/tag/${tag.toLowerCase()}`}
+          class={`tag-filter-item compact ${selectedTag === tag.toLowerCase() ? 'active' : ''}`}
+          data-tag={tag.toLowerCase()}
+        >
+          <Icon
+            name={tagIcons[tag] || tagIcons.default}
+            size={14}
+            class="tag-icon"
+          />
+          <span class="tag-name">{tag.slice(0, 8).toUpperCase()}</span>
+          <span class="tag-count compact" id={`count-${tag.toLowerCase()}`}>0</span>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- Active Filters Display -->
+  {(selectedTag || searchQuery) && (
+    <div class="active-filters compact">
+      <h3 class="pixel-title-green text-xs">ACTIVE</h3>
+      <div class="filter-tags">
+        {selectedTag && (
+          <div class="active-filter-tag compact">
+            <Icon name="tag" size={10} />
+            {selectedTag.slice(0, 6).toUpperCase()}
+            <a href={baseUrl} class="remove-filter">
+              <Icon name="close" size={10} />
+            </a>
+          </div>
+        )}
+        {searchQuery && (
+          <div class="active-filter-tag compact">
+            <Icon name="search" size={10} />
+            <span class="truncate">{searchQuery.slice(0, 8)}</span>
+            <button class="remove-filter" data-action="clear-search">
+              <Icon name="close" size={10} />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .search-filter-container {
+    margin-bottom: 1rem;
+  }
+
+  /* Compact Layout Specific Styles */
+  .search-filter-container.compact {
+    margin-bottom: 0;
+  }
+
+  /* Search Section */
+  .search-section {
+    margin-bottom: 2rem;
+  }
+
+  .search-section.compact {
+    margin-bottom: 1rem;
+  }
+
+  .search-bar {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto 1rem;
+  }
+
+  .search-bar.compact {
+    max-width: 100%;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 1rem 3rem 1rem 1rem;
+    border: 2px solid var(--border-primary);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    font-size: 1rem;
+    border-radius: 0;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    transition: all var(--transition-fast);
+  }
+
+  .search-input.compact {
+    padding: 0.5rem 2rem 0.5rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent);
+    background: var(--bg-secondary);
+  }
+
+  .search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.8;
+  }
+
+  .search-button {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+  }
+
+  .search-button.compact {
+    right: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  .search-button:hover {
+    color: var(--accent);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .search-icon {
+    transition: all 0.2s ease;
+  }
+
+  .inline-icon {
+    vertical-align: middle;
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
+  }
+
+  .search-results {
+    max-width: 500px;
+    margin: 0 auto;
+    border: 2px solid var(--accent);
+    background: var(--card-bg);
+    border-radius: 0;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .search-results.compact {
+    max-width: 100%;
+    max-height: 200px;
+  }
+
+  .search-results.hidden {
+    display: none;
+  }
+
+  .search-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  .search-results.compact .search-results-header {
+    padding: 0.5rem;
+  }
+
+  .clear-search {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .clear-search:hover {
+    color: var(--accent);
+    opacity: 1;
+  }
+
+  .search-results-list {
+    padding: 0.5rem;
+  }
+
+  .search-results.compact .search-results-list {
+    padding: 0.25rem;
+  }
+
+  /* Filter Section */
+  .filter-section {
+    margin-bottom: 2rem;
+  }
+
+  .filter-section.compact {
+    margin-bottom: 1rem;
+  }
+
+  .filter-title {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  }
+
+  .filter-title.compact {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag-filter-container {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .tag-filter-container.compact {
+    gap: 0.3rem;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .tag-filter-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid var(--border-primary);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  .tag-filter-item.compact {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.7rem;
+    gap: 0.3rem;
+  }
+
+  .tag-filter-item:hover {
+    transform: scale(1.02);
+    border-color: var(--accent);
+    background: var(--bg-secondary);
+  }
+
+  .tag-filter-item.compact:hover {
+    transform: scale(1.01);
+  }
+
+  .tag-filter-item.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #000000;
+    transform: scale(1.02);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .tag-filter-item.compact.active {
+    transform: scale(1.01);
+  }
+
+  .tag-icon {
+    margin-right: 0.75rem;
+    min-width: 1.5rem;
+    text-align: center;
+  }
+
+  .tag-filter-item.compact .tag-icon {
+    margin-right: 0.3rem;
+    min-width: 0.8rem;
+  }
+
+  .tag-name {
+    flex: 1;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  .tag-filter-item.compact .tag-name {
+    font-size: 0.65rem;
+  }
+
+  .tag-count {
+    background: var(--accent);
+    color: #000;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    min-width: 2rem;
+    text-align: center;
+    border-radius: 0;
+  }
+
+  .tag-count.compact {
+    padding: 0.15rem 0.25rem;
+    font-size: 0.6rem;
+    min-width: 1.2rem;
+  }
+
+  .tag-filter-item.active .tag-count {
+    background: var(--accent);
+  }
+
+  /* Active Filters */
+  .active-filters {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 2px solid var(--accent);
+    background: var(--bg-tertiary);
+  }
+
+  .active-filters.compact {
+    max-width: 100%;
+    padding: 0.5rem;
+    margin: 0;
+  }
+
+  .active-filters h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  }
+
+  .active-filters.compact h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .active-filter-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Doto', 'Sixtyfour', monospace;
+    font-size: 0.875rem;
+    font-weight: bold;
+  }
+
+  .active-filter-tag.compact {
+    padding: 0.25rem 0.4rem;
+    gap: 0.25rem;
+    font-size: 0.65rem;
+  }
+
+  .remove-filter {
+    background: transparent;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    padding: 0.125rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .remove-filter:hover {
+    transform: scale(1.2);
+  }
+
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 4rem;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .search-input {
+      padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .filter-title {
+      font-size: 1.25rem;
+    }
+
+    .tag-filter-item {
+      padding: 0.75rem;
+    }
+
+    .tag-emoji {
+      font-size: 1rem;
+      margin-right: 0.5rem;
+    }
+
+    .tag-name {
+      font-size: 0.8rem;
+    }
+
+    .tag-count {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+      min-width: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .search-input {
+      padding: 0.5rem 2rem 0.5rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .tag-filter-item {
+      padding: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tag-icon {
+      margin-right: 0.4rem;
+      min-width: 1rem;
+    }
+
+    .tag-name {
+      font-size: 0.75rem;
+      flex: 1 1 100%;
+      margin-bottom: 0.25rem;
+    }
+
+    .tag-count {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.3rem;
+      min-width: 1.2rem;
+    }
+  }
+</style>
+
+<script>
+  // Search functionality
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  const searchResultsList = document.getElementById('search-results-list');
+  const clearSearchBtn = document.getElementById('clear-search');
+
+  // Article data - this will be populated from server-side data
+  let articles = [];
+
+  // Load articles from window data
+  function loadArticles() {
+    try {
+      if (window.articlesData) {
+        // Parse if it's a string, use directly if it's already an array
+        articles = typeof window.articlesData === 'string'
+          ? JSON.parse(window.articlesData)
+          : window.articlesData;
+
+        // Ensure it's an array
+        if (!Array.isArray(articles)) {
+          console.warn('Articles data is not an array');
+          articles = [];
+        }
+      } else {
+        console.warn('No articles data found on window');
+        articles = [];
+      }
+    } catch (e) {
+      console.error('Error loading articles data:', e);
+      articles = [];
+    }
+  }
+
+  function searchArticles(query) {
+    if (!query.trim()) {
+      return [];
+    }
+
+    const lowercaseQuery = query.toLowerCase();
+    return articles.filter(article =>
+      article.title.toLowerCase().includes(lowercaseQuery) ||
+      article.description.toLowerCase().includes(lowercaseQuery) ||
+      article.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+    );
+  }
+
+  function searchTags(query) {
+    if (!query.trim()) {
+      return [];
+    }
+
+    const lowercaseQuery = query.toLowerCase();
+    const allTags = new Set();
+
+    // Collect all tags
+    articles.forEach(article => {
+      article.tags.forEach(tag => {
+        if (tag.toLowerCase().includes(lowercaseQuery)) {
+          allTags.add(tag);
+        }
+      });
+    });
+
+    return Array.from(allTags).map(tag => {
+      const tagArticles = articles.filter(article =>
+        article.tags.includes(tag)
+      );
+
+      return {
+        tag: tag,
+        count: tagArticles.length,
+        articles: tagArticles
+      };
+    });
+  }
+
+  function displaySearchResults(articles, tags, query) {
+    let resultsHTML = '';
+
+    // Display matching tags
+    if (tags.length > 0) {
+      resultsHTML += `
+        <div class="search-section">
+          <h4 class="pixel-title-cyan" style="padding: 0.5rem; font-size: 0.8rem; border-bottom: 1px solid var(--accent);">
+            MATCHING TAGS
+          </h4>
+          ${tags.map(tagResult => `
+            <a href="/articles/tag/${tagResult.tag.toLowerCase()}" class="search-result-item" style="display: block; padding: 0.75rem; border-bottom: 1px solid var(--border-primary); color: var(--text-primary); text-decoration: none; transition: all 0.2s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h4 class="pixel-title-green" style="margin-bottom: 0.25rem; font-size: 0.8rem;">
+                    🏷️ ${tagResult.tag.toUpperCase()}
+                  </h4>
+                  <p class="pixel-text opacity-60" style="font-size: 0.7rem;">
+                    ${tagResult.count} article${tagResult.count !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <div class="search-result-tags" style="display: flex; flex-wrap: wrap; gap: 0.2rem;">
+                  ${tagResult.articles.slice(0, 2).map(article => article.title.slice(0, 15)).join(', ')}${tagResult.articles.length > 2 ? '...' : ''}
+                </div>
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Display matching articles
+    if (articles.length > 0) {
+      resultsHTML += `
+        <div class="search-section">
+          <h4 class="pixel-title-green" style="padding: 0.5rem; font-size: 0.8rem; border-bottom: 1px solid var(--accent);">
+            MATCHING ARTICLES
+          </h4>
+          ${articles.map(article => `
+            <a href="/articles/${article.slug}" class="search-result-item" style="display: block; padding: 0.75rem; border-bottom: 1px solid var(--border-primary); color: var(--text-primary); text-decoration: none; transition: all 0.2s ease;">
+              <h4 class="pixel-title-green" style="margin-bottom: 0.25rem; font-size: 0.8rem;">${article.title}</h4>
+              <p class="pixel-text opacity-80" style="font-size: 0.7rem; margin-bottom: 0.5rem;">${article.description}</p>
+              <div class="search-result-tags" style="display: flex; flex-wrap: wrap; gap: 0.2rem;">
+                ${article.tags.slice(0, 3).map(tag => `
+                  <span class="pixel-tag" style="background: var(--accent)20; color: var(--accent); border: 1px solid var(--accent); padding: 0.15rem 0.3rem; font-size: 0.6rem;">
+                    ${tag.toUpperCase()}
+                  </span>
+                `).join('')}
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (resultsHTML === '') {
+      resultsHTML = `
+        <div class="no-results pixel-text opacity-60" style="padding: 1rem; text-align: center;">
+          No articles or tags found matching "${query}".
+        </div>
+      `;
+    }
+
+    searchResultsList.innerHTML = resultsHTML;
+  }
+
+  function handleSearch() {
+    const query = searchInput.value.trim();
+
+    if (query) {
+      const articleResults = searchArticles(query);
+      const tagResults = searchTags(query);
+      displaySearchResults(articleResults, tagResults, query);
+      searchResults.classList.remove('hidden');
+    } else {
+      searchResults.classList.add('hidden');
+    }
+  }
+
+  // Event listeners
+  searchInput?.addEventListener('input', handleSearch);
+  clearSearchBtn?.addEventListener('click', () => {
+    searchInput.value = '';
+    searchResults.classList.add('hidden');
+    searchInput.focus();
+  });
+
+  // Close search results when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-section')) {
+      searchResults.classList.add('hidden');
+    }
+  });
+
+  // Update tag counts (this would be done server-side in production)
+  function updateTagCounts() {
+    const tagCounts = {};
+    articles.forEach(article => {
+      article.tags.forEach(tag => {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+    });
+
+    Object.entries(tagCounts).forEach(([tag, count]) => {
+      const countElement = document.getElementById(`count-${tag.toLowerCase()}`);
+      if (countElement) {
+        countElement.textContent = count;
+      }
+    });
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    loadArticles();
+    updateTagCounts();
+
+    // Add hover effects to search results
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest('.search-result-item')) {
+        e.target.closest('.search-result-item').style.background = 'var(--bg-tertiary)';
+        e.target.closest('.search-result-item').style.transform = 'scale(1.02)';
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest('.search-result-item')) {
+        e.target.closest('.search-result-item').style.background = 'transparent';
+        e.target.closest('.search-result-item').style.transform = 'scale(1)';
+      }
+    });
+  });
+</script>
