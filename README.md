@@ -6,7 +6,7 @@
 
 **🎮 Retro pixel-themed Astro blog with true pixel fonts and particle effects**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg
 [![Astro Version](https://img.shields.io/badge/Astro-4.0+-orange.svg)](https://astro.build/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-4.9+-blue.svg)](https://www.typescriptlang.org/)
 
