@@ -30,7 +30,7 @@ export async function getStaticPaths() {
   for (const post of allPosts) {
     const { Content } = await post.render();
     paths.push({
-      params: { slug: post.slug },
+      params: { slug: post.id },
       props: { post, Content },
     });
   }
@@ -52,10 +52,10 @@ if (!post) {
 
 // Get related posts (exclude current post)
 const relatedPosts = allPosts
-  .filter(p => p.slug !== slug)
+  .filter(p => p.id !== slug)
   .slice(0, 2)
   .map(p => ({
-    slug: p.slug,
+    slug: p.id,
     title: p.data.title,
     description: p.data.description,
     color: p.data.color

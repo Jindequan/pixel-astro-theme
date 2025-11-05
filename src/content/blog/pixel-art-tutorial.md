@@ -235,7 +235,7 @@ Checkerboard dither:
 :root {
   --primary: #ff00ff;    // Magenta
   --secondary: #00ffff;  // Cyan
-  --accent: #ffff00;     // Yellow
+  --accent: #ff8800;     // Deep orange
   --dark: #0a0a0a;       // Black
   --light: #ffffff;      // White
 }

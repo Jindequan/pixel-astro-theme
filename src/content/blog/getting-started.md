@@ -62,7 +62,7 @@ export const defaultSiteConfig = {
   themeColors: {
     primary: '#00ff00',    // Your brand color
     secondary: '#00ffff',  // Secondary accent
-    accent: '#ffff00',     // Highlight color
+    accent: '#ff8800',     // Deep orange highlight
     background: '#0a0a0a', // Background
     text: '#00ff00'        // Text color
   },

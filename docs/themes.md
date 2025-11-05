@@ -92,7 +92,7 @@ interface ThemeColors {
 {
   primary: '#ff00ff',    // Magenta
   secondary: '#00ffff',  // Cyan
-  accent: '#ffff00',     // Yellow
+  accent: '#ff8800',     // Deep orange
   background: '#1a0033', // Dark purple
   text: '#ff00ff'        // Bright magenta
 }

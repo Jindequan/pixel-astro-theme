@@ -41,7 +41,7 @@ export class ThemeManager {
     return {
       primary: computedStyle.getPropertyValue('--theme-primary').trim() || '#00ff00',
       secondary: computedStyle.getPropertyValue('--theme-secondary').trim() || '#00ffff',
-      accent: computedStyle.getPropertyValue('--theme-accent').trim() || '#ffff00',
+      accent: computedStyle.getPropertyValue('--theme-accent').trim() || '#ff8800',
       background: computedStyle.getPropertyValue('--theme-background').trim() || '#0a0a0a',
       text: computedStyle.getPropertyValue('--theme-text').trim() || '#00ff00'
     };
@@ -81,7 +81,7 @@ export class ThemeManager {
       neon: {
         primary: '#00ff00',
         secondary: '#00ffff',
-        accent: '#ffff00',
+        accent: '#ff8800',
         background: '#0a0a0a',
         text: '#00ff00'
       },
@@ -116,7 +116,7 @@ export class ThemeManager {
       cyberpunk: {
         primary: '#ff00ff',
         secondary: '#00ffff',
-        accent: '#ffff00',
+        accent: '#ff8800',
         background: '#0a0a0a',
         text: '#ff00ff'
       }

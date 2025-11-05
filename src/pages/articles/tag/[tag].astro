@@ -76,7 +76,7 @@ const articlesData = JSON.stringify(publishedPostsForSearch.map(post => ({
   title: post.data.title,
   description: post.data.description,
   tags: post.data.tags,
-  slug: post.slug,
+  slug: post.id,
   publishDate: post.data.publishDate
 })));
 
@@ -89,7 +89,7 @@ const allOtherPosts = publishedPosts.filter(post =>
 const relatedPosts = allOtherPosts
   .slice(0, 3)
   .map(p => ({
-    slug: p.slug,
+    slug: p.id,
     title: p.data.title,
     description: p.data.description,
     color: p.data.color,
@@ -167,10 +167,10 @@ const relatedPosts = allOtherPosts
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <Card
-              key={post.slug}
+              key={post.id}
               title={post.data.title}
               description={post.data.description}
-              href={`/articles/${post.slug}/`}
+              href={`/articles/${post.id}/`}
               glowColor={post.data.color}
               className="pixel-card hover:scale-105 transition-transform duration-300"
             >
@@ -286,10 +286,10 @@ const relatedPosts = allOtherPosts
         <div class="grid gap-6 md:grid-cols-3">
           {relatedPosts.map((post) => (
             <Card
-              key={post.slug}
+              key={post.id}
               title={post.title}
               description={post.description}
-              href={`/articles/${post.slug}/`}
+              href={`/articles/${post.id}/`}
               glowColor={post.color}
               className="pixel-card hover:scale-105 transition-transform duration-300"
             >

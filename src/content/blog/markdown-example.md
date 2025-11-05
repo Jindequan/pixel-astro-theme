@@ -6,7 +6,7 @@ updateDate: 2025-10-30
 tags: ["markdown", "tutorial", "formatting", "blogging", "example"]
 author: "Jindequan"
 featured: false
-color: "#ffff00"
+color: "#ff8c00"
 draft: false
 ---
 

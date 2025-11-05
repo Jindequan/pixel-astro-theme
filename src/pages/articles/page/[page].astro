@@ -98,7 +98,7 @@ const articlesData = JSON.stringify(publishedPosts.map(post => {
       title: String(post.data?.title || ''),
       description: String(post.data?.description || ''),
       tags: Array.isArray(post.data?.tags) ? post.data.tags : [],
-      slug: String(post.slug || ''),
+      slug: String(post.id || ''),
       publishDate: post.data?.publishDate || '',
       featured: Boolean(post.data?.featured || false)
     };
@@ -197,10 +197,10 @@ const articlesData = JSON.stringify(publishedPosts.map(post => {
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <Card
-                key={post.slug}
+                key={post.id}
                 title={post.data.title}
                 description={post.data.description}
-                href={`/articles/${post.slug}/`}
+                href={`/articles/${post.id}/`}
                 glowColor={post.data.color}
                 className="pixel-card hover:scale-105 transition-transform duration-300"
               >

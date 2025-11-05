@@ -89,10 +89,10 @@ const latestPosts = sortedPosts.slice(0, 3);
         <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {latestPosts.map((post) => (
             <Card
-              key={post.slug}
+              key={post.id}
               title={post.data.title}
               description={post.data.description}
-              href={`/articles/${post.slug}/`}
+              href={`/articles/${post.id}/`}
               glowColor={post.data.color}
               className="pixel-card hover:scale-105 transition-transform duration-300"
             >
